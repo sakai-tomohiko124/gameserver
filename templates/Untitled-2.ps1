@@ -1,1 +1,0 @@
-Get-Content C:\Users\skyto\Documents\gameserver\server.log -Wait -Tail 200

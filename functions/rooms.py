@@ -13,7 +13,15 @@ try:
     import db
 except Exception:
     db = None
-from psycopg2 import psycopg2
+try:
+    # prefer the modern psycopg (psycopg) if available, otherwise fall back to psycopg2
+    try:
+        import psycopg  # type: ignore
+        _psycopg = psycopg
+    except Exception:
+        import psycopg2 as _psycopg  # type: ignore
+except Exception:
+    _psycopg = None
 
 
 
@@ -235,6 +243,32 @@ def emit_event(room_id: str, event_type: str, payload: Dict[str, Any]):
 
 def pop_events(room_id: str):
     return ROOM_EVENTS.pop(room_id, [])
+
+
+def _row_to_dict(cur, row):
+    """Convert a DB row to a dict mapping column names to values.
+
+    Works for both psycopg (psycopg) and psycopg2 or generic cursor.row tuples.
+    If row is already a mapping (supports keys), return as-is.
+    """
+    try:
+        # psycopg2.extras.DictRow behaves like a mapping
+        if hasattr(row, 'keys'):
+            return dict(row)
+    except Exception:
+        pass
+    # fall back to using cursor.description to map column names
+    try:
+        desc = [d[0] for d in cur.description] if cur and getattr(cur, 'description', None) else []
+        if desc and isinstance(row, (list, tuple)):
+            return {k: v for k, v in zip(desc, row)}
+    except Exception:
+        pass
+    # last resort: attempt to coerce to dict
+    try:
+        return dict(row)
+    except Exception:
+        return {}
 
 
 def make_deck() -> List[str]:
@@ -1853,17 +1887,18 @@ def get_room_state(room_id: str, player_id: str = None) -> Dict[str, Any]:
             if db and to_pid:
                 try:
                     conn = db.get_conn()
-                    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor) # 辞書形式で結果を取得
+                    cur = conn.cursor()
                     cur.execute('SELECT score, finished_rank FROM players WHERE id = %s AND game_id = %s', (to_pid, room['id']))
                     row = cur.fetchone()
-                    if row:
+                    rowd = _row_to_dict(cur, row) if row is not None else {}
+                    if rowd:
                         try:
-                            to_score = int(row['score']) if row['score'] is not None else None
+                            to_score = int(rowd.get('score')) if rowd.get('score') is not None else None
                         except Exception:
                             to_score = None
                         if to_rank is None:
                             try:
-                                fr = row['finished_rank']
+                                fr = rowd.get('finished_rank')
                                 to_rank = int(fr) if fr is not None else None
                             except Exception:
                                 pass

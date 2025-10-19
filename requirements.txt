@@ -7,4 +7,4 @@ python-socketio
 psycopg2-binary
 click
 awsgi
-awshgi; sys_platform != "win32"
+awshgi; sys_platform != "win64"

@@ -1,7 +1,6 @@
-
 [build]
   functions = "functions"
-  publish = "templates"
+  publish = "static"
 
 [functions]
   included_files = ["templates/**", "static/**"]

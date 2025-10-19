@@ -1,7 +1,7 @@
 
 [build]
   functions = "functions"
-  publish = "static" # ここは通常使われませんが、念のため設定
+  publish = "templates"
 
 [functions]
   included_files = ["templates/**", "static/**"]

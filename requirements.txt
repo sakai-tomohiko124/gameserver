@@ -1,10 +1,8 @@
 Flask
-flet
+awsgi
 requests
 beautifulsoup4
 flask-socketio
 python-socketio
 psycopg2-binary
 click
-awsgi
-awshgi; sys_platform != "win64"

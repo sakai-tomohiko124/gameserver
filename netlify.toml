@@ -10,10 +10,7 @@
   publish = "static"
 
 [functions]
-  # functionsフォルダ内のPythonプログラムが、他のフォルダにあるファイルを
-  # 読み込めるようにするための設定です。
-  # これにより、api.pyが templates/ や data/ フォルダにアクセスできます。
-  included_files = ["templates/**", "data/**"]
+  included_files = ["templates/**", "data/**", "static/**"]
 
 [[redirects]]
   # サイトに来たすべてのアクセス ("/*") を書き換えるルールです。

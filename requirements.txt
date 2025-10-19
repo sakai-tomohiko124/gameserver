@@ -2,9 +2,11 @@ Flask
 flet
 requests
 beautifulsoup4
-# awsgi (needed for Netlify deployment) depends on uvloop which is not supported on Windows.
-# Skip installing awsgi on Windows by using an environment marker.
-awsgi; sys_platform != "win32"
+# awsgi is used to adapt WSGI apps (Flask) for Netlify Functions
+awsgi
 flask-socketio
 python-socketio
+# Use prebuilt binary wheel to avoid compilation on CI
 psycopg2-binary
+# CLI helper used by api.py
+click

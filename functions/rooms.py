@@ -13,11 +13,16 @@ try:
     import db
 except Exception:
     db = None
+from psycopg2 import psycopg2
 
-                                                                                  
+
+
 QA_PAIRS: List[Dict[str, str]] = []
 try:
-    qa_path = os.path.join(os.path.dirname(__file__), 'QA.json')
+    # QA.jsonのパスを絶対パス基準で解決するように修正
+    # __file__ は functions/rooms.py を指すため、プロジェクトルートに戻る必要がある
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    qa_path = os.path.join(base_dir, 'static', 'QA.json')
     if os.path.exists(qa_path):
         with open(qa_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -44,7 +49,8 @@ try:
         BOT_QA = list(QA_PAIRS)
     else:
         # try to load alternate path inside static if present
-        alt = os.path.join(os.path.dirname(__file__), 'static', 'QA.json')
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        alt = os.path.join(base_dir, 'static', 'QA.json')
         if os.path.exists(alt):
             with open(alt, 'r', encoding='utf-8') as af:
                 data = json.load(af)
@@ -98,7 +104,8 @@ def pick_bot_reply(topic: str = None, tone: str = None) -> str:
 # Load bot display name pool from static/name.json (if present). Each entry may be an object with 'name' field or a plain string.
 BOT_NAME_POOL: List[str] = []
 try:
-    _name_path = os.path.join(os.path.dirname(__file__), 'static', 'name.json')
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    _name_path = os.path.join(base_dir, 'static', 'name.json')
     if os.path.exists(_name_path):
         with open(_name_path, 'r', encoding='utf-8') as _nf:
             _ndata = json.load(_nf)
@@ -164,20 +171,15 @@ def _send_contact_notification(player: Dict[str, Any], room_id: str, reason: str
                         s.login(user, pwd)
                         s.send_message(msg)
                 except Exception:
-                    with open('notifications.log', 'a', encoding='utf-8') as f:
-                        f.write(f"{datetime.now(timezone.utc).isoformat()} EMAIL_FAIL to:{contact_email} subj:{subject}\n")
+                    # Netlifyのファイルシステムは書き込み不可のため、ログ記録はエラーになる可能性がある
+                    # loggingモジュールを使う方が望ましい
+                    pass
             else:
-                with open('notifications.log', 'a', encoding='utf-8') as f:
-                    f.write(f"{datetime.now(timezone.utc).isoformat()} NOTIFY to:{contact_email} reason:{reason} room:{room_id}\n")
+                pass
         elif contact_phone:
-            with open('notifications.log', 'a', encoding='utf-8') as f:
-                f.write(f"{datetime.now(timezone.utc).isoformat()} SMS to:{contact_phone} reason:{reason} room:{room_id}\n")
-    except Exception:
-        try:
-            with open('notifications.log', 'a', encoding='utf-8') as f:
-                f.write(f"{datetime.now(timezone.utc).isoformat()} NOTIFY_ERR for player:{player.get('id')} room:{room_id}\n")
-        except Exception:
             pass
+    except Exception:
+        pass
 
                                       
 TITLE_MAP = {
@@ -286,6 +288,12 @@ def create_room(creator_name: str) -> Dict[str, Any]:
         'direction': 'clockwise',
     }
     ROOMS[room_id] = room
+    if db:
+        try:
+            db.create_game(room_id, metadata=json.dumps({'creator': creator_name}))
+        except Exception:
+            # データベースへの書き込み失敗は、ゲームの進行に影響を与えないようにする
+            pass
     return {'room': room, 'player_id': player_id}
 
 
@@ -1038,11 +1046,11 @@ def add_message(room_id: str, player_id: str, text: str) -> Dict[str, Any]:
     pname = None
     for p in room['players']:
         if p['id'] == player_id:
-            pname = p['name']
+            pname = p.get('display_name') or p['name']
             break
     if pname is None:
         pname = 'Unknown'
-    import datetime
+    
     ts = datetime.now(timezone.utc).isoformat()
     msg = _make_message(player_id, pname, text, ts=ts)
     room.setdefault('messages', []).append(msg)
@@ -1128,14 +1136,15 @@ def process_bots(room: Dict[str, Any]):
                                                                            
     # If current player is a bot, schedule a visible 'thinking' period and perform the action after a delay.
     # This prevents immediate skips and lets clients show the bot's thinking/playing animation.
-    n = len(room['players'])
+    n = len(room.get('players', []))
     safety = 0
     while True:
         if safety > 500:
             break
         safety += 1
-        cur = room['players'][room['current_turn']]
-        if not cur.get('is_bot'):
+        cur_idx = room.get('current_turn', 0)
+        cur = room['players'][cur_idx] if 0 <= cur_idx < len(room['players']) else None
+        if not cur or not cur.get('is_bot'):
             break
         # If a bot action is already scheduled for this room, don't schedule another
         if room.get('_bot_scheduled'):
@@ -1844,7 +1853,8 @@ def get_room_state(room_id: str, player_id: str = None) -> Dict[str, Any]:
             if db and to_pid:
                 try:
                     conn = db.get_conn()
-                    cur = conn.execute('SELECT score, finished_rank FROM players WHERE id = ? AND game_id = ?', (to_pid, room['id']))
+                    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor) # 辞書形式で結果を取得
+                    cur.execute('SELECT score, finished_rank FROM players WHERE id = %s AND game_id = %s', (to_pid, room['id']))
                     row = cur.fetchone()
                     if row:
                         try:
@@ -1859,6 +1869,9 @@ def get_room_state(room_id: str, player_id: str = None) -> Dict[str, Any]:
                                 pass
                 except Exception:
                     pass
+                finally:
+                    if 'conn' in locals() and conn:
+                        conn.close()
             pending_give = {'to': to_pid, 'to_name': to_name, 'count': cfg.get('count'), 'allowed': cfg.get('allowed'), 'to_hand_count': to_hand_count, 'to_is_bot': to_is_bot, 'to_rank': to_rank, 'to_score': to_score}
     return {
         'id': room['id'],
@@ -1879,16 +1892,19 @@ def get_room_state(room_id: str, player_id: str = None) -> Dict[str, Any]:
 
 def _advance_to_next_active(room: Dict[str, Any]):
     """Advance current_turn to the next player index that still has cards. If none, leave as is."""
-    n = len(room['players'])
+    n = len(room.get('players', []))
     if n == 0:
         return
     dir_setting = room.get('direction', 'clockwise')
+    current_turn = room.get('current_turn', 0)
     for _ in range(n):
         if dir_setting == 'clockwise':
-            room['current_turn'] = (room['current_turn'] + 1) % n
+            current_turn = (current_turn + 1) % n
         else:
-            room['current_turn'] = (room['current_turn'] - 1) % n
-        pid = room['players'][room['current_turn']]['id']
+            current_turn = (current_turn - 1 + n) % n # マイナスにならないように +n
+        
+        room['current_turn'] = current_turn
+        pid = room['players'][current_turn]['id']
         if len(room['hands'].get(pid, [])) > 0:
             room['turn_started_at'] = datetime.now(timezone.utc).isoformat()
             return
@@ -2080,7 +2096,7 @@ def give_card(room_id: str, from_player_id: str, card: str, direction: str = Non
         if direction == 'left':
             ridx = (idx + 1) % n
         elif direction == 'right':
-            ridx = (idx - 1) % n
+            ridx = (idx - 1 + n) % n # マイナスにならないように
         else:
             raise RuntimeError('invalid direction')
     else:
@@ -2088,7 +2104,7 @@ def give_card(room_id: str, from_player_id: str, card: str, direction: str = Non
         dir_setting = room.get('direction', 'clockwise')
         if dir_setting == 'clockwise':
                             
-            ridx = (idx - 1) % n
+            ridx = (idx - 1 + n) % n
         else:
                                                
             ridx = (idx + 1) % n
@@ -2324,4 +2340,3 @@ def _end_game_if_finished(room_id: str):
         room['last_player'] = None
         room['consecutive_passes'] = 0
         return room
-

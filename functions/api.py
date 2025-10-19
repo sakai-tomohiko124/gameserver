@@ -1,4 +1,3 @@
-# api.py
 from flask import Flask, render_template, request, jsonify
 import uuid
 import threading
@@ -16,24 +15,17 @@ import requests
 import random
 import click
 
-# Flaskアプリを初期化
-# テンプレートと静的フォルダはプロジェクトルートの `templates` / `static` を使う
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
-# Socket.IO for interactive games
 socketio = SocketIO(app, cors_allowed_origins='*', async_mode='threading')
 
-# Simple in-memory rooms for babanuki websocket gameplay
-# room_id -> {players: [{'id','name','sid','is_bot'}], hands: {pid: [cards]}, alive: [pid], turn_idx: int, running: bool, pending_action: None, bot_difficulties: {pid:diff}}
 BABA_ROOMS = {}
 
-# トップページ (小説への案内)
 @app.route('/')
 def index():
-    # まずスクレイピングで取得を試みる（メタ情報のみ）
     source_url = 'https://www.alphapolis.co.jp/novel/31484585/380882757'
     meta = fetch_novel_metadata(source_url)
     if meta:
@@ -45,7 +37,6 @@ def index():
             'cover': meta.get('cover') or '',
         }
     else:
-        # フォールバック情報
         novel_info = {
             'title': 'あだなが242個ある男～こういうときはAREを使おう！～',
             'author': 'ともはる',
@@ -54,7 +45,6 @@ def index():
         }
     return render_template('index.html', novel=novel_info)
 
-# 大富豪のゲームページ
 @app.route('/game/daifugo')
 def daifugo():
     return render_template('daifugo.html')
@@ -65,7 +55,6 @@ def api_create_room():
     data = request.get_json() or {}
     name = data.get('name') or 'Player'
     result = rooms.create_room(name)
-    # return room id and player id
     return jsonify({'room_id': result['room']['id'], 'player_id': result['player_id'], 'room': result['room']})
 
 
@@ -116,14 +105,12 @@ def api_patch_room_rules(room_id):
     if not room:
         return jsonify({'error': 'ルームが見つかりません'}), 404
     data = request.get_json() or {}
-    # allowed keys and expected type: boolean
     allowed_keys = {'spade3_over_joker', 'spade3_single_only', 'block_8_after_2', 'auto_pass_when_no_joker_vs_2'}
     rules = room.setdefault('rules', {})
     updates = {}
     for k, v in data.items():
         if k not in allowed_keys:
             return jsonify({'error': f'無効なルールキー: {k}'}), 400
-        # coerce to boolean if possible
         if isinstance(v, bool):
             updates[k] = v
         else:
@@ -145,18 +132,13 @@ def api_patch_room_rules(room_id):
 
 @app.route('/api/rooms/<room_id>/events')
 def api_room_events(room_id):
-    # Simple SSE endpoint. Clients should keep connection open.
     def gen():
-        # initial handshake
         yield 'retry: 2000\n\n'
         while True:
             events = rooms.pop_events(room_id)
             if events:
                 for ev in events:
-                    # Use a safe serializer that handles unicode, datetimes and
-                    # falls back to a minimal payload if serialization fails.
                     data = _safe_json_dumps(ev.get('payload'))
-                    # SSE format: event: <type>\ndata: <json>\n\n
                     yield f"event: {ev['type']}\n"
                     for line in data.splitlines():
                         yield f"data: {line}\n"
@@ -197,7 +179,6 @@ def _translate_error(msg: str) -> str:
     If the message already contains non-ascii characters (likely already Japanese), return as-is.
     """
     try:
-        # If message likely contains Japanese (non-ascii), return it unchanged
         if any(ord(c) > 127 for c in (msg or "")):
             return msg
     except Exception:
@@ -226,14 +207,11 @@ def _translate_error(msg: str) -> str:
     if msg in mapping:
         return mapping[msg]
 
-    # special-case patterns
-    # expected N card(s) to give
     m = re.search(r'expected\s+(\d+)', msg)
     if m and 'to give' in msg:
         n = m.group(1)
         return f'{n}枚のカードを指定する必要があります'
 
-    # fallback: return original message
     return msg
 
 
@@ -261,15 +239,12 @@ def _translate_shiritori_error(msg: str) -> str:
     if msg in mapping:
         return mapping[msg]
 
-    # fallback: return original message
     return msg
 
 
 @app.route('/api/rooms/<room_id>/next_round', methods=['POST'])
 def api_next_round(room_id):
-    # Reset hands and start a new round keeping players list intact
     try:
-        # persist previous round results if available
         room_obj = rooms.ROOMS.get(room_id)
         if room_obj and hasattr(rooms, 'ROOMS') and room_obj.get('finished'):
             try:
@@ -414,7 +389,6 @@ def api_recommended_rooms():
                 if resp.status_code == 200:
                     results['external_results'].append({'base': base, 'data': resp.json()})
             except Exception:
-                # just skip unreachable external server
                 continue
     return jsonify(results)
 
@@ -463,7 +437,6 @@ def api_update_bot(room_id, bot_id):
     bot = next((p for p in room['players'] if p['id'] == bot_id and p.get('is_bot')), None)
     if not bot:
         return jsonify({'error': 'ボットが見つかりません'}), 404
-    # validate inputs (simple)
     if display_name is not None:
         bot['display_name'] = str(display_name)[:32]
     if tone is not None:
@@ -534,7 +507,6 @@ def babanuki():
 
 @app.route('/game/babanuki/join/<room_id>')
 def babanuki_join(room_id):
-    # Redirect to the canonical babanuki page with ?room=... so client-side auto-join logic triggers.
     from flask import redirect, url_for
     target = url_for('babanuki') + '?room=' + room_id
     return redirect(target)
@@ -544,11 +516,8 @@ def babanuki_join(room_id):
 def api_babanuki_simulate():
     data = request.get_json() or {}
     names = data.get('names') or []
-    # fallback: if no names provided, create three bots
     if not names:
         names = ['Player1', 'Player2', 'Player3']
-    # If any provided name looks like a human (not a BOT###), refuse full-automatic simulate
-    # Bot names produced by the server typically look like BOT1, BOT2, ...
     human_present = any(not re.match(r'^(?:BOT|bot)\d+$', n) for n in names)
     if human_present:
         return jsonify({'error': '人間プレイヤーが含まれているため全自動シミュレーションは許可されていません。インタラクティブな Socket.IO モードを利用してください。'}), 400
@@ -556,7 +525,6 @@ def api_babanuki_simulate():
         import babanuki
         res = babanuki.simulate(names)
     except Exception as e:
-        # translate common error messages to Japanese for client display
         return jsonify({'error': _translate_error(str(e))}), 500
     return jsonify(res)
 
@@ -567,8 +535,6 @@ def api_babanuki_stream():
     names = data.get('names') or []
     if not names:
         names = ['Player1', 'Player2', 'Player3']
-    # Prevent full-automatic streaming when any non-bot (human) name is present.
-    # Bot names from server are like BOT1/BOT2 — treat anything else as human.
     human_present = any(not re.match(r'^(?:BOT|bot)\d+$', n) for n in names)
     if human_present:
         return jsonify({'error': '人間プレイヤーが含まれているため全自動プレイは許可されていません。Socket.IO を使ったインタラクティブモードを使用してください。'}), 400
@@ -576,12 +542,10 @@ def api_babanuki_stream():
     thinking_seconds = int(data.get('thinking_seconds') or 5)
 
     def gen():
-        # initial handshake
         yield 'retry: 2000\n\n'
         try:
             import babanuki
             for ev in babanuki.simulate_stream(names, bot_difficulties=bot_difficulties, thinking_seconds=thinking_seconds):
-                # each ev is a dict with type
                 etype = ev.get('type', 'log')
                 data = _safe_json_dumps(ev)
                 yield f"event: {etype}\n"
@@ -608,25 +572,20 @@ def shiritori_page():
 def api_shi_create():
     data = request.get_json() or {}
     name = data.get('name') or 'Player'
-    # create room via shiritori module
     res = shiritori.create_room(name)
     room = res['room']
     player_id = res['player_id']
 
-    # If only one human player, automatically add a bot (simple AI) by joining and marking as bot
     try:
         if len(room.get('players', [])) == 1:
-            # choose a bot name from shared pool if available
             bot_name = data.get('auto_bot_name') or (rooms.pick_bot_display_name(set(p.get('name') for p in room.get('players', []))))
             bot_res = shiritori.join_room(room['id'], bot_name)
-            # mark last joined player as bot for UI
             bot_player_id = bot_res['player_id']
             for p in room.get('players', []):
                 if p['id'] == bot_player_id:
                     p['is_bot'] = True
                     break
     except Exception:
-        # if bot addition fails, ignore and return created room anyway
         pass
 
     return jsonify({'room_id': room['id'], 'player_id': player_id, 'room': room})
@@ -717,12 +676,10 @@ def api_shi_events(room_id):
 def quiz():
     return render_template('quiz.html')
 
-# Netlify Functionsで動かすためのおまじない
 def handler(event, context):
     try:
         import awsgi
     except Exception:
-        # awsgi is optional in local/dev environments. Return a minimal response.
         return {
             'statusCode': 500,
             'body': 'awsgi not installed in this environment'
@@ -730,7 +687,6 @@ def handler(event, context):
     return awsgi.response(app, event, context)
 
 
-# CLI helper: initialize the sqlite database using db.init_db
 @app.cli.command('init-db')
 @click.option('--schema', default=None, help='Path to SQL schema file (default: data.sql)')
 def init_db_cli(schema):
@@ -753,7 +709,6 @@ def init_db_cli(schema):
         raise
 
 
-### Socket.IO handlers for babanuki
 @socketio.on('baba:create')
 def on_baba_create(data):
     name = data.get('name') or 'Player'
@@ -784,7 +739,6 @@ def _emit_state(room_id):
     room = BABA_ROOMS.get(room_id)
     if not room:
         return
-    # build state similar to simulate_stream
     players_state = []
     for p in room['players']:
         pid = p['id']
@@ -805,15 +759,12 @@ def _check_for_winner(room_id):
     for p in room.get('players', []):
         pid = p.get('id')
         if len(room.get('hands', {}).get(pid, [])) == 0:
-            # prefer display_name if present
             winners.append(p.get('display_name') or p.get('name'))
     if winners:
-        # emit a win event for the room (clients may show toast/log once per winner)
         for w in winners:
             try:
                 socketio.emit('baba:win', {'winner': w, 'room_id': room_id}, room=room_id)
             except Exception:
-                # don't let emission failure break game loop
                 pass
         return True
     return False
@@ -827,17 +778,14 @@ def on_baba_start(data):
     if not room:
         socketio.emit('baba:error', {'msg': 'ルームが見つかりません'}, room=request.sid)
         return
-    # ensure at least 3 players: add bots
     bot_idx = 1
     while len(room['players']) < 3:
         bid = f'bot{bot_idx}'
-        # pick display name avoiding duplicates
         used = set(p.get('name') for p in room['players']) | set(p.get('display_name') for p in room['players'])
         display = rooms.pick_bot_display_name(used)
         room['players'].append({'id': bid, 'name': f'BOT{bot_idx}', 'sid': None, 'is_bot': True, 'display_name': display})
         bot_idx += 1
 
-    # deal
     import babanuki as bb
     deck = bb._make_deck()
     random.shuffle(deck)
@@ -847,7 +795,6 @@ def on_baba_start(data):
     for c in deck:
         hands[pid_list[i % len(pid_list)]].append(c)
         i += 1
-    # remove pairs
     for pid in pid_list:
         hands[pid] = bb._remove_pairs(hands[pid])
 
@@ -856,33 +803,26 @@ def on_baba_start(data):
     room['turn_idx'] = 0
     room['running'] = True
 
-    # broadcast initial state
     _emit_state(room_id)
     socketio.emit('baba:log', {'text': 'ゲームを開始しました'}, room=room_id)
 
-    # start background thread to run the turn loop
     def run_loop():
         cap = 10000
         iter_count = 0
         while room['running'] and len(room['alive']) > 1 and iter_count < cap:
             iter_count += 1
             pid = room['alive'][room['turn_idx'] % len(room['alive'])]
-            # determine target
             next_idx = (room['turn_idx'] + 1) % len(room['alive'])
             target_pid = room['alive'][next_idx]
-            # if bot's turn, do thinking then draw
             cur_player = next((p for p in room['players'] if p['id'] == pid), None)
             is_bot = bool(cur_player and cur_player.get('is_bot'))
             if is_bot:
-                # thinking ticks
                 for s in range(thinking_seconds, 0, -1):
                     socketio.emit('baba:thinking', {'player': cur_player['name'], 'seconds': s}, room=room_id)
                     time.sleep(1)
-                # choose card according to simple logic
                 cand = list(room['hands'][target_pid])
                 chosen = random.choice(cand)
                 room['hands'][target_pid].remove(chosen)
-                # handle pairing
                 pair = next((c for c in list(room['hands'][pid]) if c['rank'] == chosen['rank'] and c['rank'] != 'JOKER'), None)
                 if pair:
                     room['hands'][pid].remove(pair)
@@ -891,25 +831,20 @@ def on_baba_start(data):
                     room['hands'][pid].append(chosen)
                 socketio.emit('baba:log', {'text': f"{cur_player['name']} は {target_pid} から 1枚引きました ({chosen['name']})"}, room=room_id)
             else:
-                # human: set pending and wait for client to send baba:draw
                 room['pending'] = {'player': pid, 'target': target_pid}
-                # find target player display name for client-side highlighting
                 target_player_obj = next((p for p in room['players'] if p['id'] == target_pid), None)
                 target_name = (target_player_obj.get('display_name') or target_player_obj.get('name')) if target_player_obj else target_pid
                 socketio.emit('baba:request_draw', {'player': cur_player['name'], 'target_count': len(room['hands'][target_pid]), 'target_name': target_name}, room=room_id)
-                # wait until pending is cleared by client's action
                 wait_count = 0
                 while room.get('pending') and wait_count < 300:
                     time.sleep(0.5)
                     wait_count += 1
 
-            # cleanup empty hands
             for p in list(room['alive']):
                 if len(room['hands'].get(p, [])) == 0:
                     try:
                         room['alive'].remove(p)
                         socketio.emit('baba:log', {'text': f"{p} は手札がなくなり上がりました"}, room=room_id)
-                        # Emit immediate win event for UI when someone empties their hand
                         try:
                             _check_for_winner(room_id)
                         except Exception:
@@ -917,13 +852,11 @@ def on_baba_start(data):
                     except ValueError:
                         pass
 
-            # advance turn
             if room['turn_idx'] < len(room['alive']):
                 room['turn_idx'] = (room['turn_idx'] + 1) % max(1, len(room['alive']))
 
             _emit_state(room_id)
 
-        # finish
         final_hands = {p['name']: [c['name'] for c in room['hands'].get(p['id'], [])] for p in room['players']}
         loser = None
         for p in room['players']:
@@ -952,7 +885,6 @@ def on_baba_setup(data):
     if not room:
         socketio.emit('baba:error', {'msg': 'ルームが見つかりません'}, room=request.sid)
         return
-    # ensure at least 3 players by adding bots
     bot_idx = 1
     while len(room['players']) < 3:
         bid = f'bot{bot_idx}'
@@ -961,7 +893,6 @@ def on_baba_setup(data):
         room['players'].append({'id': bid, 'name': f'BOT{bot_idx}', 'sid': None, 'is_bot': True, 'display_name': display})
         bot_idx += 1
 
-    # deal and initial pair removal (reuse babanuki helpers)
     import babanuki as bb
     deck = bb._make_deck()
     random.shuffle(deck)
@@ -971,7 +902,6 @@ def on_baba_setup(data):
     for c in deck:
         hands[pid_list[i % len(pid_list)]].append(c)
         i += 1
-    # initial pair removal
     for pid in pid_list:
         before = len(hands[pid])
         hands[pid] = bb._remove_pairs(hands[pid])
@@ -986,7 +916,6 @@ def on_baba_setup(data):
     room['turn_idx'] = 0
     room['running'] = False
 
-    # emit state
     players_state = []
     for p in room['players']:
         pid = p['id']
@@ -1007,10 +936,8 @@ def on_baba_add_bots(data):
     if not room:
         socketio.emit('baba:error', {'msg': 'ルームが見つかりません'}, room=request.sid)
         return
-    # find existing bot index start
     existing_ids = set(p['id'] for p in room['players'])
     bot_idx = 1
-    # pick a start index larger than existing bot ids if any
     while f'bot{bot_idx}' in existing_ids:
         bot_idx += 1
 
@@ -1025,7 +952,6 @@ def on_baba_add_bots(data):
         socketio.emit('baba:log', {'text': f"ボット {display} を参加させました（{bid}）"}, room=room_id)
         bot_idx += 1
 
-    # emit updated state
     players_state = []
     for p in room['players']:
         pid = p['id']
@@ -1038,7 +964,6 @@ def api_setup_room(room_id):
     room = BABA_ROOMS.get(room_id)
     if not room:
         return jsonify({'error': 'ルームが見つかりません'}), 404
-    # ensure at least 3 players
     bot_idx = 1
     while len(room['players']) < 3:
         bid = f'bot{bot_idx}'
@@ -1078,7 +1003,6 @@ def on_baba_draw(data):
     pending = room['pending']
     pid = pending['player']
     target_pid = pending['target']
-    # simulate draw
     if not room['hands'].get(target_pid):
         socketio.emit('baba:error', {'msg': '対象にカードがありません'}, room=request.sid)
         room['pending'] = None
@@ -1094,17 +1018,11 @@ def on_baba_draw(data):
     socketio.emit('baba:log', {'text': f"{pid} は {target_pid} から 1枚引きました ({chosen['name']})"}, room=room_id)
     room['pending'] = None
     _emit_state(room_id)
-    # After changing hands, check whether anyone emptied their hand -> victory
     try:
         _check_for_winner(room_id)
     except Exception:
         pass
 
 
-# Note: legacy generic game handlers (next page, start_game) removed.
-# babanuki-specific Socket.IO handlers (baba:create/join/start/setup/add_bots/draw) are authoritative.
-
-
 if __name__ == '__main__':
-    # ローカルでのデバッグ実行用 (Windows / Cloud Shell での確認に便利)
     socketio.run(app, host='0.0.0.0', port=8080, debug=True)

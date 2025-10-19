@@ -7,3 +7,4 @@ beautifulsoup4
 awsgi; sys_platform != "win32"
 flask-socketio
 python-socketio
+psycopg2-binary

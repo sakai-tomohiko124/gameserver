@@ -2,11 +2,9 @@ Flask
 flet
 requests
 beautifulsoup4
-# awsgi is used to adapt WSGI apps (Flask) for Netlify Functions
-awsgi
 flask-socketio
 python-socketio
-# Use prebuilt binary wheel to avoid compilation on CI
 psycopg2-binary
-# CLI helper used by api.py
 click
+awsgi
+awshgi; sys_platform != "win32"

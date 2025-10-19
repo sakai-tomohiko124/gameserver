@@ -1,31 +1,12 @@
-# Netlify Functionsを使ってPythonアプリケーションを動かすための設定
-
 [build]
-  # サーバーで動かすプログラム(Python)が入っているフォルダを指定します。
-  # Netlifyはこの "functions" という名前のフォルダを探しに行きます。
   functions = "functions"
-
-  # CSS, JavaScript, 画像ファイルなど、静的なファイルが入っているフォルダを指定します。
-  # このフォルダがウェブサイトのルートとして公開されます。
   publish = "static"
 
 [functions]
   included_files = ["templates/**", "data/**", "static/**"]
 
 [[redirects]]
-  # サイトに来たすべてのアクセス ("/*") を書き換えるルールです。
   from = "/*"
-
-  # すべてのアクセスを、api.pyをコンパイルして作られた
-  # ".netlify/functions/api" というサーバープログラムに渡します。
-  # これにより、どのURLにアクセスしてもPythonプログラムが応答するようになります。
   to = "/.netlify/functions/api/:splat"
-
-  # status = 200 は「リダイレクト」ではなく「書き換え」を意味します。
-  # URLは変わらずに、裏側で処理するプログラムだけが変わります。
   status = 200
-
-  # ★★★★★ これが重要 ★★★★★
-  # もしリクエストに一致する静的ファイルが存在する場合は、
-  # この書き換えルールを適用せず、静的ファイルを返すようにします。
   force = false

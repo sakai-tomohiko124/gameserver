@@ -9,18 +9,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.11, 3.10]
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.10' # 推奨バージョンに変更
+
+
 
       - name: Install dependencies
         run: |

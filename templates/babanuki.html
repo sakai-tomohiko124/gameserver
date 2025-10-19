@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ババ抜き - ゲーム</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  {% include '_header.html' %}
+  <main style="padding:40px;">
+    <h1>ババ抜き</h1>
+    <p>最後までジョーカーを持っていた人が負けです。</p>
+
+    <div id="controls" class="game-controls">
+      <label class="gc-item">プレイヤー名（カンマ区切り）:
+        <input id="names" value="Alice,Bob" class="gc-input">
+      </label>
+      <label class="gc-item">思考秒数:
+        <input id="thinking" value="5" size="3" class="gc-input gc-small">
+      </label>
+      <label class="gc-item">待機タイムアウト(秒):
+        <input id="wait_timeout" value="8" size="3" class="gc-input gc-small" type="number" min="5" max="10">
+      </label>
+      <label class="gc-item">モード:
+        <select id="mode" class="gc-select">
+          <option value="auto">全自動（AI実行：BOTのみ）</option>
+        </select>
+      </label>
+      <button id="start" class="gc-btn">開始</button>
+      <span id="mode_note" class="gc-note">※ 全自動はBOTのみで実行されます</span>
+      <div id="mode_desc" class="gc-desc">モードを選択してください。BOTのみでAIが進行します。</div>
+      <!-- Room controls always visible: Socket.IO will attach handlers if available -->
+      <div id="room_controls" style="display:flex;align-items:center;gap:8px;margin-left:8px;">
+        <button id="create_room_btn" class="gc-btn">ルーム作成</button>
+        <input id="join_room_input" placeholder="room id" class="gc-input gc-small" style="width:120px;">
+        <button id="join_room_btn" class="gc-btn">参加</button>
+        <span id="room_info" class="gc-note" style="margin-left:8px"></span>
+      </div>
+      <div id="timer_ui" style="display:flex;align-items:center;gap:12px;margin-left:8px;">
+        <div id="timer_container" aria-live="polite" style="display:flex;align-items:center;gap:12px;">
+          <div id="timer_circle" style="width:88px;height:88px;position:relative">
+            <svg width="88" height="88" viewBox="0 0 88 88">
+              <circle cx="44" cy="44" r="36" stroke="#37474f" stroke-width="8" fill="none"></circle>
+              <circle id="timer_progress" cx="44" cy="44" r="36" stroke="#90caf9" stroke-width="8" fill="none" stroke-linecap="round" transform="rotate(-90 44 44)" stroke-dasharray="226.1946710584651" stroke-dashoffset="0"></circle>
+            </svg>
+            <div id="timer_number" style="position:absolute;left:0;top:0;width:88px;height:88px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#90caf9">-</div>
+          </div>
+          <div style="display:flex;flex-direction:column;">
+            <div id="timer_label" style="font-size:14px;color:#90caf9;font-weight:700">残り</div>
+            <div id="timer_sub" style="font-size:12px;color:#cfe8ff">タイマー</div>
+          </div>
+        </div>
+      </div>
+      <div id="invite_ui" style="display:flex;gap:8px;align-items:center;margin-left:8px;">
+        <input id="invite_link_input" class="gc-input" style="width:360px;" readonly placeholder="招待リンクがここに表示されます">
+        <button id="copy_invite_btn" class="gc-btn">招待リンクをコピー</button>
+      </div>
+      <label style="margin-left:12px;display:flex;align-items:center;gap:6px"><input type="checkbox" id="auto_setup_chk"> 自動セットアップ（配牌・初期ペア削除まで自動）</label>
+      <label style="margin-left:12px;display:flex;align-items:center;gap:6px">自動で追加するBOT数: <input id="auto_bot_count" type="number" value="2" min="0" max="10" class="gc-input gc-small" style="width:60px"></label>
+    </div>
+
+    <!-- Custom confirmation modal -->
+    <div id="confirm_modal" class="modal" aria-hidden="true">
+      <div class="modal-content">
+        <h3 id="confirm_title">確認</h3>
+        <p id="confirm_text">続行しますか？</p>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px;">
+          <button id="confirm_cancel" class="gc-btn gc-btn-secondary">キャンセル</button>
+          <button id="confirm_ok" class="gc-btn">続行</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Setup progress modal -->
+    <div id="setup_modal" class="modal" aria-hidden="true">
+      <div class="modal-content">
+        <h3>自動セットアップの進行</h3>
+        <div id="setup_progress" style="background:#fff;color:#000;padding:10px;border:1px solid #ddd;max-height:240px;overflow:auto;white-space:pre-wrap;"></div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px;">
+          <button id="setup_close" class="gc-btn" disabled>閉じる</button>
+        </div>
+      </div>
+    </div>
+
+    <h2>進行</h2>
+    <div style="display:flex;gap:20px;align-items:flex-start;">
+      <div style="flex:1">
+        <h3>プレイヤー</h3>
+        <ul id="players" style="list-style:none;padding:0;margin:0;">
+        </ul>
+      </div>
+      <div style="flex:2">
+        <h3>ログ</h3>
+        <div id="progress" style="background:#fff;padding:10px;border:1px solid #ddd;max-height:300px;overflow:auto;"></div>
+      </div>
+    </div>
+    <h2>最終結果</h2>
+    <pre id="final" style="white-space:pre-wrap;background:#f8f8f8;padding:10px;border:1px solid #ddd;max-height:200px;overflow:auto;"></pre>
+
+    <style>
+      /* ページ固有: ログ（#progress）のみ黒文字にして他は白文字にする */
+      /* デフォルトは白文字（ページの大部分） */
+      main, #players, #players .hand, #players .count, #players .thinking, .gc-desc, .gc-note, .gc-item, .gc-input, .gc-select, .game-controls, .gc-btn {
+        color: #fff !important;
+      }
+      /* ログ部分は白背景に黒文字で可読性を確保 */
+      #progress { background: #fff !important; color: #000 !important; }
+      /* 最終結果はページの他部分と合わせて白文字（背景は暗い） */
+      #final { background: transparent !important; color: #fff !important; border-color: rgba(255,255,255,0.06); }
+      /* 既存のチャット/メッセージ系の強制色を上書き */
+      #messages, .chat-box, .chat-line, #players, #players div, #players pre { color: #fff !important; }
+      /* room_info を目立たせる */
+      #room_info { font-weight: 700; color: #ffeb3b !important; background: rgba(255,235,59,0.08); padding:4px 8px; border-radius:4px; margin-left:8px }
+      /* setup modal overrides */
+      #setup_modal .modal-content { max-width: 640px }
+    </style>
+
+    <script>
+      // グローバルスコープで変数を宣言
+      var socket = null;
+      var myName = null;
+      var myRoom = null;
+
+      // Socket.IOの動的ロード
+      (function(){
+        // Always load Socket.IO from CDN
+        (function(){
+          function loadScript(src, onload, onerror){
+            const s = document.createElement('script');
+            s.src = src;
+            s.async = true;
+            s.onload = onload;
+            s.onerror = onerror;
+            document.head.appendChild(s);
+            return s;
+          }
+
+          const cdnPath = 'https://cdn.socket.io/4.6.1/socket.io.min.js';
+
+          loadScript(cdnPath, function(){
+            window.__HAS_SOCKET_IO = true;
+            if(typeof initSocket === 'function') initSocket();
+          }, function(){
+            window.__HAS_SOCKET_IO = false;
+            console.warn('Socket.IO client not available');
+            try{
+              const startBtn = document.getElementById('start');
+              if(startBtn) startBtn.textContent = '開始 (REST API)';
+            }catch(e){}
+          });
+        })();
+      })();
+
+      // Custom confirm modal helper - returns a Promise<boolean>
+      function showConfirm(message, title){
+        return new Promise((resolve)=>{
+          const modal = document.getElementById('confirm_modal')
+          const txt = document.getElementById('confirm_text')
+          const t = document.getElementById('confirm_title')
+          const okBtn = document.getElementById('confirm_ok')
+          const cancelBtn = document.getElementById('confirm_cancel')
+          if(!modal || !txt || !t || !okBtn || !cancelBtn){
+            // fallback: simple window.confirm
+            const r = window.confirm(message || '続行しますか？')
+            resolve(!!r)
+            return
+          }
+          txt.textContent = message || '続行しますか？'
+          t.textContent = title || '確認'
+          // remember active element to restore focus later
+          const prevActive = document.activeElement
+          modal.setAttribute('aria-hidden', 'false')
+          // focus the OK button so focus is not hidden by aria-hidden
+          try{ okBtn.focus() }catch(e){}
+          function cleanup(){
+            modal.setAttribute('aria-hidden', 'true')
+            okBtn.removeEventListener('click', onOk)
+            cancelBtn.removeEventListener('click', onCancel)
+            try{ if(prevActive && typeof prevActive.focus === 'function') prevActive.focus() }catch(e){}
+          }
+          function onOk(){ cleanup(); resolve(true) }
+          function onCancel(){ cleanup(); resolve(false) }
+          okBtn.addEventListener('click', onOk)
+          cancelBtn.addEventListener('click', onCancel)
+        })
+      }
+
+      // Setup modal helpers
+      function showSetupModal(){
+        const m = document.getElementById('setup_modal')
+        const closeBtn = document.getElementById('setup_close')
+        const prog = document.getElementById('setup_progress')
+        if(!m || !closeBtn || !prog) return
+        prog.textContent = ''
+        m.setAttribute('aria-hidden', 'false')
+        closeBtn.disabled = true
+        closeBtn.onclick = function(){ m.setAttribute('aria-hidden', 'true') }
+      }
+      function appendSetupProgress(text){
+        const el = document.getElementById('setup_progress')
+        if(!el) return
+        el.textContent += text + '\n'
+        el.scrollTop = el.scrollHeight
+      }
+      function enableSetupClose(){
+        const closeBtn = document.getElementById('setup_close')
+        if(!closeBtn) return
+        closeBtn.disabled = false
+      }
+
+      function initSocket(){
+          // Defensive init: io may not be available immediately even after script.onload
+          // Retry a few times before giving up and provide diagnostic logs.
+          if (window.__SOCKET_INIT_STARTED) return; // avoid double-init
+          window.__SOCKET_INIT_STARTED = true;
+
+          function diagnoseAndInit(attempt){
+            try{
+              console.debug('[initSocket] attempt', attempt, 'typeof io=', typeof window.io, 'io=', window.io);
+            }catch(e){ console.debug('[initSocket] diagnostic error', e); }
+
+            if (typeof window.io === 'function'){
+              try{
+                socket = window.io();
+              }catch(e){
+                console.error('socket.io initialization failed:', e, 'window.io=', window.io);
+                return;
+              }
+              // --- Socket.IOの初期化が成功した後の処理をここにまとめる ---
+              
+              // UIの更新やイベントハンドラの設定
+              const startBtn = document.getElementById('start');
+              if(startBtn){
+                startBtn.textContent = '開始 (Socket.IO)';
+              }
+
+              // socket handlers to update UI
+              socket.on('baba:created', (msg)=>{
+                myRoom = msg.room_id;
+                if(document.getElementById('room_info')) document.getElementById('room_info').textContent = 'room=' + myRoom;
+                appendProgress('ルーム作成: ' + myRoom);
+                // show invite link for easy sharing
+                try{
+                  const base = (window.location && window.location.origin ? window.location.origin : '')
+                  const link = base + '/game/babanuki/join/' + encodeURIComponent(myRoom);
+                  if(document.getElementById('room_info')) document.getElementById('room_info').textContent += ' | 招待: ' + link;
+                  const inv = document.getElementById('invite_link_input')
+                  if(inv) inv.value = link
+                }catch(e){}
+                // If a start was requested before creation, proceed
+                if(window.__PENDING_START_CONFIG){
+                  const cfg = window.__PENDING_START_CONFIG;
+                  window.__PENDING_START_CONFIG = null;
+                  proceedStart(myRoom, cfg);
+                }
+              });
+              socket.on('baba:joined', (msg)=>{
+                myRoom = msg.room_id;
+                if(document.getElementById('room_info')) document.getElementById('room_info').textContent = 'room=' + myRoom;
+                appendProgress('参加しました: ' + myRoom);
+                try{
+                  const base = (window.location && window.location.origin ? window.location.origin : '')
+                  const link = base + '/game/babanuki/join/' + encodeURIComponent(myRoom);
+                  if(document.getElementById('room_info')) document.getElementById('room_info').textContent += ' | 招待: ' + link;
+                  const inv = document.getElementById('invite_link_input')
+                  if(inv) inv.value = link
+                }catch(e){}
+              });
+              socket.on('baba:state', (st)=>{ renderState(st); });
+              socket.on('baba:log', (d)=>{ appendProgress(d.text); });
+              // show thinking countdown in dedicated timer area (not in log)
+              socket.on('baba:thinking', (d)=>{
+                try{
+                  const name = d.player || ''
+                  const sec = parseInt(d.seconds) || 0
+                  const total = parseInt(d.total_seconds) || sec || 5
+                  updateTimer(sec, total, name)
+                }catch(e){}
+              });
+              socket.on('baba:finish', (d)=>{
+                if(d && d.loser){
+                  let out = '敗者: ' + d.loser + '\n\n最終手札:\n';
+                  for(const k of Object.keys(d.final_hands||{})){
+                    out += k + ': ' + (d.final_hands[k]||[]).join(', ') + '\n';
+                  }
+                  if(document.getElementById('final')) document.getElementById('final').textContent = out;
+                }
+                // clear timer when finished
+                try{ resetTimer() }catch(e){}
+              });
+              // show immediate win message when a player empties their hand
+              socket.on('baba:win', (m)=>{
+                try{
+                  const who = m && m.winner ? m.winner : '(不明)'
+                  appendProgress(`勝利: ${who} さんが手札をなくして勝利しました！`)
+                  // also display prominently in final area
+                  const fin = document.getElementById('final')
+                  if(fin) fin.textContent = `${who} さんが勝利しました！\n\n` + (fin.textContent || '')
+                }catch(e){ }
+              });
+              
+
+            } else {
+              if (attempt < 5){
+                // wait and retry
+                setTimeout(()=> diagnoseAndInit(attempt+1), 200);
+                return;
+              }
+              console.warn('socket.io client not found or not a function after retries. window.io=', window.io);
+              window.__HAS_SOCKET_IO = false;
+            }
+          } // <<< diagnoseAndInit 関数の閉じ括弧（修正点）
+
+          diagnoseAndInit(1); // 初期化処理を開始
+      }
+
+      // Room controls (create/join) - support Socket.IO and REST fallback
+      (function(){
+        const createBtn = document.getElementById('create_room_btn')
+        const joinBtn = document.getElementById('join_room_btn')
+        const joinInput = document.getElementById('join_room_input')
+        const roomInfo = document.getElementById('room_info')
+
+        async function createRoomFallback(name){
+          const resp = await fetch('/api/rooms', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name})})
+          if(!resp.ok) throw new Error('ルーム作成失敗')
+          return resp.json()
+        }
+
+        async function joinRoomFallback(room_id, name){
+          const resp = await fetch('/api/rooms/'+encodeURIComponent(room_id)+'/join', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name})})
+          if(!resp.ok) throw new Error('参加失敗')
+          return resp.json()
+        }
+
+        if(createBtn) createBtn.addEventListener('click', async function(){
+          const name = (document.getElementById('names') && document.getElementById('names').value.split(',').map(s=>s.trim()).filter(Boolean)[0]) || 'Player'
+          if(window.__HAS_SOCKET_IO && socket && typeof socket.emit === 'function'){
+            try{ socket.emit('baba:create', {name}) }catch(e){ console.warn(e) }
+          } else {
+            try{
+              const data = await createRoomFallback(name)
+              if(roomInfo) roomInfo.textContent = 'room=' + data.room_id + ' you=' + data.player_id
+            }catch(e){ if(roomInfo) roomInfo.textContent = 'ルーム作成に失敗しました' }
+          }
+        })
+
+        if(joinBtn) joinBtn.addEventListener('click', async function(){
+          const room_id = joinInput ? joinInput.value.trim() : ''
+          const name = (document.getElementById('names') && document.getElementById('names').value.split(',').map(s=>s.trim()).filter(Boolean)[0]) || 'Player'
+          if(!room_id){ if(roomInfo) roomInfo.textContent = 'room id を入力してください'; return }
+          if(window.__HAS_SOCKET_IO && socket && typeof socket.emit === 'function'){
+            try{ socket.emit('baba:join', {room_id, name}) }catch(e){ console.warn(e) }
+          } else {
+            try{
+              const data = await joinRoomFallback(room_id, name)
+              if(roomInfo) roomInfo.textContent = 'room=' + data.room_id + ' you=' + data.player_id
+            }catch(e){ if(roomInfo) roomInfo.textContent = '参加に失敗しました' }
+          }
+        })
+  })();
+        // Auto-join when ?room=<id> is present in URL (invite link)
+        (function(){
+          try{
+            const params = new URLSearchParams(window.location.search)
+            const r = params.get('room')
+            if(r){
+              // attempt to join using Socket.IO if available, else REST
+              const name = (document.getElementById('names') && document.getElementById('names').value.split(',').map(s=>s.trim()).filter(Boolean)[0]) || 'Player'
+              if(window.__HAS_SOCKET_IO && socket){
+                socket.emit('baba:join', {room_id: r, name})
+                appendProgress('招待リンクを検出しました。ルームに参加します: ' + r)
+              } else {
+                fetch('/api/rooms/'+encodeURIComponent(r)+'/join', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name})})
+                  .then(res=>res.json()).then(j=>{ if(j.error) appendProgress('参加に失敗しました: '+j.error); else { myRoom = j.room_id; if(document.getElementById('room_info')) document.getElementById('room_info').textContent = 'room='+myRoom; appendProgress('REST経由で参加しました: '+myRoom) }})
+                  .catch(e=> appendProgress('参加に失敗しました: '+e))
+              }
+            }
+          }catch(e){}
+  })();
+
+      // Message queue: show one message every 3 seconds, keep max 10 lines
+      (function(){
+        const queue = []
+        let displaying = false
+        const maxLines = 10
+        function renderLines(lines){
+          const el = document.getElementById('progress')
+          if(!el) return
+          el.textContent = lines.join('\n') + (lines.length? '\n' : '')
+          el.scrollTop = el.scrollHeight
+        }
+        function showNext(){
+          if(displaying) return
+          displaying = true;
+          ;(async function(){
+            while(queue.length){
+              const msg = queue.shift()
+              // append to DOM storing last maxLines
+              const el = document.getElementById('progress')
+              if(el){
+                const cur = el.textContent ? el.textContent.trim().split('\n') : []
+                cur.push(msg)
+                while(cur.length > maxLines) cur.shift()
+                renderLines(cur)
+              }
+              // wait for 3 seconds before showing next
+              await new Promise(r=>setTimeout(r, 3000))
+            }
+            displaying = false
+          })()
+        }
+        window.appendProgress = function(text){
+          if(!text) return
+          queue.push(text)
+          // if queue is long, drop oldest queued to avoid backlog
+          if(queue.length > 100) queue.splice(0, queue.length-100)
+          showNext()
+        }
+      })();
+
+      // circular timer helpers
+      function updateTimer(secondsLeft, totalSeconds, label){
+        try{
+          const num = document.getElementById('timer_number')
+          const prog = document.getElementById('timer_progress')
+          const lbl = document.getElementById('timer_label')
+          if(num) num.textContent = (secondsLeft === null || secondsLeft === undefined) ? '-' : String(secondsLeft) + 's'
+          if(lbl && label !== undefined) lbl.textContent = label
+          if(prog && typeof totalSeconds === 'number' && totalSeconds > 0){
+            const r = 36
+            const circumference = 2 * Math.PI * r
+            const frac = Math.max(0, Math.min(1, secondsLeft / totalSeconds))
+            const offset = circumference * (1 - frac)
+            prog.style.strokeDasharray = String(circumference)
+            prog.style.strokeDashoffset = String(offset)
+          }
+        }catch(e){console.warn('timer update error', e)}
+      }
+
+      // reset timer
+      function resetTimer(){ updateTimer('-', 1, '残り') }
+
+      // UI: mode note/description behavior
+      (function(){
+        const modeSelect = document.getElementById('mode')
+        const modeNote = document.getElementById('mode_note')
+        const modeDesc = document.getElementById('mode_desc')
+        function updateModeUI(){
+          if(!modeSelect) return
+          if(modeSelect.value === 'auto'){
+            if(modeNote) modeNote.textContent = '※ 全自動は BOT のみで実行します（入力は BOT 名に置換されます）'
+            if(modeDesc) modeDesc.textContent = '全自動モードを選ぶと、AI（BOT）がゲームを進行します。人間が参加する場合はインタラクティブを選んでください。'
+          } else {
+            if(modeNote) modeNote.textContent = '※ インタラクティブは人間を含めて手動で進めます'
+            if(modeDesc) modeDesc.textContent = 'インタラクティブモードでは Socket.IO を使ったルーム作成/参加でプレイします（人間が含まれる場合は全自動は行いません）。'
+          }
+        }
+        if(modeSelect) modeSelect.addEventListener('change', updateModeUI)
+        updateModeUI()
+  })();
+
+      function renderState(obj){
+        const ul = document.getElementById('players')
+        if(!ul || !obj) return
+        ul.innerHTML = ''
+        for(const p of obj.players||[]){
+          const li = document.createElement('li')
+          li.setAttribute('data-name', p.name)
+          li.innerHTML = `<div style="display:flex;align-items:center;gap:8px"><strong>${p.name}</strong> <span class="count">(${p.count}枚)</span> <span class="thinking" style="color:#c33;margin-left:8px"></span></div><div class="hand" style="font-size:0.9em;color:#444;margin-top:4px">${p.hand && p.hand.length? p.hand.join(', ') : ''}</div>`
+          ul.appendChild(li)
+        }
+      }
+
+  // Start button behavior (including stream fallback)
+  // proceedStart handles creating/joining room and starting the game via Socket.IO
+      async function proceedStart(room_id, cfg){
+        const thinking = cfg.thinking || 5
+        const autoSetup = !!cfg.autoSetup
+        const autoBotCount = parseInt(document.getElementById('auto_bot_count').value) || 0
+
+        if(!room_id){
+          // create a room first
+          if(window.__HAS_SOCKET_IO && socket && typeof socket.emit === 'function'){
+            socket.emit('baba:create', {name: cfg.primaryName || 'Player'})
+            // creation will trigger baba:created where we continue
+            return
+          } else {
+            // fallback: create via REST then set as myRoom
+            try{
+              const resp = await fetch('/api/rooms', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name: cfg.primaryName || 'Player'})})
+              const json = await resp.json()
+              myRoom = json.room_id
+            }catch(e){ appendProgress('ルーム作成に失敗しました: '+e); return }
+          }
+        } else {
+          myRoom = room_id
+        }
+
+        // ensure bots are present up to requested count (server-side will also ensure min players)
+        if(window.__HAS_SOCKET_IO && socket && typeof socket.emit === 'function'){
+          // request adding bots if configured
+          if(autoBotCount > 0){
+            socket.emit('baba:add_bots', {room_id: myRoom, target: autoBotCount})
+          }
+          // optionally auto-setup
+          if(autoSetup){
+            socket.emit('baba:setup', {room_id: myRoom})
+            appendProgress('自動セットアップを要求しました')
+          }
+          // finally start
+          socket.emit('baba:start', {room_id: myRoom, thinking_seconds: thinking})
+          appendProgress('ゲーム開始リクエストを送信しました')
+        } else {
+          appendProgress('Socket.IOが利用できないため開始できません')
+        }
+      }
+
+      // New start button behavior: prepare config and either create room then start, or start existing room
+  const startBtnMain = document.getElementById('start')
+  async function __startBtnHandler(e){
+        if(document.getElementById('progress')) document.getElementById('progress').textContent = ''
+        if(document.getElementById('final')) document.getElementById('final').textContent = ''
+        if(document.getElementById('players')) document.getElementById('players').innerHTML = ''
+        const names = (document.getElementById('names') && document.getElementById('names').value.split(',').map(s=>s.trim()).filter(Boolean)) || []
+        const thinking = parseInt(document.getElementById('thinking').value) || 15
+        const mode = (document.getElementById('mode') && document.getElementById('mode').value) || 'interactive'
+        const autoSetup = !!(document.getElementById('auto_setup_chk') && document.getElementById('auto_setup_chk').checked)
+        const autoBotCount = parseInt(document.getElementById('auto_bot_count').value) || 0
+
+        // prefer Socket.IO interactive flow
+        if(mode === 'interactive'){
+          // If user already joined a room, start there
+          if(myRoom && socket){
+            proceedStart(myRoom, {thinking, autoSetup, autoBotCount, primaryName: names[0]})
+            return
+          }
+
+          // else create a room then start automatically
+          if(window.__HAS_SOCKET_IO){
+            // save config until baba:created arrives
+            window.__PENDING_START_CONFIG = {thinking, autoSetup, autoBotCount, primaryName: names[0]}
+            // trigger create
+            socket.emit('baba:create', {name: names[0] || 'Player'})
+            appendProgress('ルームを作成して開始します（人数が不足する場合はBOTが参加します）')
+            return
+          }
+          appendProgress('Socket.IOが利用できません。インタラクティブモードはSocket.IOが必要です。')
+          return
+        }
+
+        // auto mode (stream) remains as before but ensure names are BOTs
+        if(mode === 'auto'){
+          const human_present = names.some(n => !/^(?:BOT|bot)\d+$/.test(n))
+          if(human_present){
+            const ok = await showConfirm('全自動モードを実行します。入力された名前を自動で BOT 名に置換して実行します。続行しますか？')
+            if(!ok){ appendProgress('全自動モードの実行をキャンセルしました。'); return }
+            const botNames = []
+            for(let i=0;i<names.length;i++) botNames.push('BOT'+(i+1))
+            names.length = 0
+            for(const b of botNames) names.push(b)
+            appendProgress('名前を BOT 名に置換して全自動モードを実行します: ' + names.join(','))
+          }
+
+          if(window.__HAS_SOCKET_IO) appendProgress('注意: Socket.IO クライアントが検出されていますが、全自動モードのためストリーミングAPIを使用します。')
+
+          try{
+            const resp = await fetch('/api/babanuki/stream', {
+              method: 'POST',
+              headers: {'Content-Type':'application/json'},
+              body: JSON.stringify({names: names, thinking_seconds: thinking})
+            })
+            if(!resp.ok){ appendProgress('エラー: ' + resp.statusText); return }
+            const reader = resp.body.getReader()
+            const decoder = new TextDecoder('utf-8')
+            let buf = ''
+            function processChunk(chunk){
+              buf += chunk
+              let parts = buf.split('\n\n')
+              buf = parts.pop()
+              for(const p of parts){
+                const lines = p.split('\n')
+                let etype = 'log'
+                let dataLines = []
+                for(const l of lines){ if(l.startsWith('event:')) etype = l.slice(6).trim(); if(l.startsWith('data:')) dataLines.push(l.slice(5)) }
+                if(dataLines.length){
+                  try{ const obj = JSON.parse(dataLines.join('\n'))
+                    if(etype === 'state') renderState(obj)
+                    else if(etype === 'thinking') {
+                      try{
+                        const sec = parseInt(obj.seconds) || 0
+                        const total = parseInt(obj.total_seconds) || sec || 5
+                        updateTimer(sec, total, obj.player||'プレイヤー')
+                      }catch(e){}
+                    }
+                    else if(etype === 'log') appendProgress(obj.text)
+                    else if(etype === 'finish'){
+                      let out = '敗者: ' + obj.loser + '\n\n最終手札:\n'
+                      for(const [k,v] of Object.entries(obj.final_hands||{})) out += k + ': ' + (v||[]).join(', ') + '\n'
+                      if(document.getElementById('final')) document.getElementById('final').textContent = out
+                      document.querySelectorAll('.thinking').forEach(e=>e.textContent='')
+                      try{ resetTimer() }catch(e){}
+                    }
+                  }catch(e){ appendProgress('受信データの解析に失敗: ' + (e && e.message? e.message: e)) }
+                }
+              }
+            }
+            while(true){ const {done, value} = await reader.read(); if(done) break; processChunk(decoder.decode(value, {stream:true})) }
+            if(buf.length) processChunk(buf)
+          }catch(e){ appendProgress('ストリーム処理でエラー: '+(e && e.message? e.message: e)) }
+        }
+      }
+      if(startBtnMain){
+        if(typeof startBtnMain.addEventListener === 'function'){
+          startBtnMain.addEventListener('click', __startBtnHandler)
+        } else {
+          // fallback: assign to onclick (covers older environments or shadowed APIs)
+          try{ startBtnMain.onclick = __startBtnHandler } catch(e){ console.warn('failed to bind start button click', e) }
+        }
+      }
+
+      // copy invite button handler
+      (function(){
+        const copyBtn = document.getElementById('copy_invite_btn')
+        if(!copyBtn) return
+        copyBtn.addEventListener('click', function(){
+          const inv = document.getElementById('invite_link_input')
+          if(!inv) return
+          const val = inv.value || ''
+          if(!val) return appendProgress('招待リンクがありません')
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(val).then(()=> appendProgress('招待リンクをコピーしました'))
+              .catch(()=>{ try{ inv.select(); document.execCommand('copy'); appendProgress('招待リンクをコピーしました（フォールバック）') }catch(e){ appendProgress('コピーに失敗しました') } })
+          } else {
+            try{ inv.select(); document.execCommand('copy'); appendProgress('招待リンクをコピーしました（フォールバック）') }catch(e){ appendProgress('コピーに失敗しました') }
+          }
+        })
+  })();
+    </script>
+  </main>
+</body>
+</html>

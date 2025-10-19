@@ -1,0 +1,11 @@
+<header class="site-header">
+  <div class="header-inner">
+    <nav class="nav-tabs">
+      <a href="/" class="tab {% if request.path == '/' %}active{% endif %}">小説を読む</a>
+      <a href="/game/babanuki" class="tab {% if request.path.startswith('/game/babanuki') %}active{% endif %}">ババ抜きをプレイ</a>
+      <a href="/game/daifugo" class="tab {% if request.path.startswith('/game/daifugo') %}active{% endif %}">大富豪をプレイ</a>
+      <a href="/game/shiritori" class="tab {% if request.path.startswith('/game/shiritori') %}active{% endif %}">しりとりをプレイ</a>
+      <a href="/quiz" class="tab {% if request.path.startswith('/quiz') %}active{% endif %}">クイズに挑戦</a>
+    </nav>
+  </div>
+</header>

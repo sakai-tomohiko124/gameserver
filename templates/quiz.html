@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARE クイズ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+        }
+        #question-container {
+            margin-bottom: 20px;
+        }
+        #question-header {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        #question-text {
+            font-size: 1.5em;
+            line-height: 1.4;
+            margin-bottom: 25px;
+            color: #1c1e21;
+        }
+        #options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            text-align: left;
+            background-color: #e4e6eb;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .option-btn:hover:not(:disabled) {
+            background-color: #d8dbdf;
+            border-color: #007bff;
+        }
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            font-weight: bold;
+        }
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+            font-weight: bold;
+        }
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        #feedback-container {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            border: 1px solid #ddd;
+        }
+        #feedback-container.correct {
+            background-color: #f0fff4;
+            border-color: #5cb85c;
+        }
+        #feedback-container.incorrect {
+            background-color: #fff0f0;
+            border-color: #d9534f;
+        }
+        #feedback-answer {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        #next-btn {
+            display: none;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+        #next-btn:hover {
+            background-color: #0056b3;
+        }
+        #result-container {
+            text-align: center;
+        }
+        #result-container h2 {
+            font-size: 2.5em;
+            color: #007bff;
+        }
+        #result-container p {
+            font-size: 1.2em;
+        }
+        #restart-btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+        #restart-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    {% include '_header.html' %}
+
+    <div id="quiz-container">
+        <div style="margin-bottom:16px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <label>
+                出題ソース:
+                <select id="source-select">
+                    <option value="are">ARE</option>
+                    <option value="story">Story</option>
+                    <option value="both">両方</option>
+                </select>
+            </label>
+
+            <label>
+                問題数:
+                <select id="count-select">
+                    <option value="5">5問</option>
+                    <option value="10">10問</option>
+                    <option value="15">15問</option>
+                    <option value="20" selected>20問</option>
+                    <option value="all">すべて</option>
+                </select>
+            </label>
+
+            <label>
+                問題形式:
+                <select id="type-select">
+                    <option value="all">すべて</option>
+                    <option value="true-false">〇×（true-false）</option>
+                    <option value="multiple-choice">４択（multiple-choice）</option>
+                </select>
+            </label>
+
+            <button id="reload-btn" style="padding:8px 12px;">読み込み</button>
+            <div id="source-note" style="color:#666; font-size:0.95em;"></div>
+        </div>
+        <div id="question-container">
+            <div id="question-header">
+                <span id="question-number"></span> / <span id="total-questions"></span>
+            </div>
+            <p id="question-text"></p>
+            <div id="options-container"></div>
+            <div id="feedback-container">
+                <p id="feedback-answer"></p>
+                <p id="feedback-explanation"></p>
+            </div>
+            <button id="next-btn">次の問題へ</button>
+        </div>
+        <div id="result-container" style="display: none;">
+            <h2>クイズ終了！</h2>
+            <p>あなたのAREアプリ知識力は...</p>
+            <p id="score-text"></p>
+            <p id="rank-text"></p>
+            <button id="restart-btn">もう一度挑戦する</button>
+        </div>
+    </div>
+
+    <script>
+        const questionContainer = document.getElementById('question-container');
+        const questionNumberEl = document.getElementById('question-number');
+        const totalQuestionsEl = document.getElementById('total-questions');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackContainer = document.getElementById('feedback-container');
+        const feedbackAnswerEl = document.getElementById('feedback-answer');
+        const feedbackExplanationEl = document.getElementById('feedback-explanation');
+        const nextBtn = document.getElementById('next-btn');
+        const resultContainer = document.getElementById('result-container');
+        const scoreTextEl = document.getElementById('score-text');
+        const rankTextEl = document.getElementById('rank-text');
+        const restartBtn = document.getElementById('restart-btn');
+        const sourceSelect = document.getElementById('source-select');
+        const typeSelect = document.getElementById('type-select');
+        const reloadBtn = document.getElementById('reload-btn');
+        const sourceNote = document.getElementById('source-note');
+
+        let allQuizzes = [];
+        let areQuizzes = [];
+        let storyQuizzes = [];
+        let currentQuizIndex = 0;
+        let score = 0;
+
+        // load both JSON files; story.json is optional
+        async function loadQuizzes() {
+            areQuizzes = [];
+            storyQuizzes = [];
+            sourceNote.textContent = '';
+
+            const p1 = fetch("{{ url_for('static', filename='are.json') }}")
+                .then(async r => {
+                    if (!r.ok) throw new Error('are.json not found');
+                    areQuizzes = await r.json();
+                })
+                .catch(e => {
+                    console.error(e);
+                    sourceNote.textContent = 'are.json を読み込めませんでした。';
+                });
+
+            const p2 = fetch("{{ url_for('static', filename='story.json') }}")
+                .then(async r => {
+                    if (!r.ok) throw new Error('story.json not found');
+                    storyQuizzes = await r.json();
+                })
+                .catch(e => {
+                    // optional: don't spam error when missing
+                    console.info('story.json not available');
+                });
+
+            await Promise.all([p1, p2]);
+
+            // if user is viewing story or both but story.json isn't present, show a gentle note
+            if ((sourceSelect.value === 'story' || sourceSelect.value === 'both') && (!storyQuizzes || storyQuizzes.length === 0)) {
+                sourceNote.textContent = '注意: story.json が見つかりません。Story を選択した場合、問題が表示されません。';
+            }
+
+            applyFiltersAndStart();
+        }
+
+    // points per question (configurable count via UI)
+    const POINTS_PER_QUESTION = 5; // typically 20 * 5 = 100
+    const countSelect = document.getElementById('count-select');
+
+        function applyFiltersAndStart() {
+            const src = sourceSelect.value;
+            const t = typeSelect.value;
+
+            let pool = [];
+            if (src === 'are') pool = areQuizzes.slice();
+            else if (src === 'story') pool = storyQuizzes.slice();
+            else pool = areQuizzes.concat(storyQuizzes);
+
+            if (!pool || pool.length === 0) {
+                questionTextEl.textContent = '選択した出題ソースに問題がありません。story.json がない場合は「ARE」を選択してください。';
+                optionsContainer.innerHTML = '';
+                totalQuestionsEl.textContent = 0;
+                return;
+            }
+
+            if (t !== 'all') {
+                pool = pool.filter(q => q.type === t);
+            }
+
+            if (!pool || pool.length === 0) {
+                questionTextEl.textContent = '選択した条件に一致する問題がありません。';
+                optionsContainer.innerHTML = '';
+                totalQuestionsEl.textContent = 0;
+                return;
+            }
+
+            // determine how many questions to ask based on UI
+            let desired = countSelect.value;
+            if (desired === 'all') {
+                // use full pool
+                allQuizzes = pool.slice();
+                // shuffle
+                allQuizzes.sort(() => Math.random() - 0.5);
+            } else {
+                const n = parseInt(desired, 10) || 20;
+                if (pool.length > n) {
+                    // Fisher-Yates shuffle then slice n
+                    for (let i = pool.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [pool[i], pool[j]] = [pool[j], pool[i]];
+                    }
+                    allQuizzes = pool.slice(0, n);
+                } else {
+                    allQuizzes = pool.slice();
+                    allQuizzes.sort(() => Math.random() - 0.5);
+                }
+            }
+
+            startQuiz();
+        }
+
+        function startQuiz() {
+            // allQuizzes already prepared; ensure shuffled
+            allQuizzes.sort(() => Math.random() - 0.5);
+            currentQuizIndex = 0;
+            score = 0;
+            resultContainer.style.display = 'none';
+            questionContainer.style.display = 'block';
+            // show count (handle 'all' label)
+            const desired = countSelect.value;
+            const countLabel = desired === 'all' ? `${allQuizzes.length} (すべて)` : `${allQuizzes.length}`;
+            totalQuestionsEl.textContent = `${countLabel} (各 ${POINTS_PER_QUESTION} 点 / 合計 ${allQuizzes.length * POINTS_PER_QUESTION} 点)`;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            const currentQuiz = allQuizzes[currentQuizIndex];
+            questionNumberEl.textContent = currentQuizIndex + 1;
+            questionTextEl.textContent = currentQuiz.question;
+
+            currentQuiz.options.forEach(option => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.classList.add('option-btn');
+                button.addEventListener('click', () => selectOption(button, currentQuiz));
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            optionsContainer.innerHTML = '';
+            feedbackContainer.style.display = 'none';
+            feedbackContainer.className = 'feedback-container';
+            nextBtn.style.display = 'none';
+        }
+
+        function selectOption(selectedButton, quiz) {
+            const userAnswer = selectedButton.innerText;
+            const isCorrect = userAnswer === quiz.answer;
+
+            if (isCorrect) {
+                score += POINTS_PER_QUESTION;
+                selectedButton.classList.add('correct');
+                feedbackContainer.classList.add('correct');
+                feedbackAnswerEl.textContent = `正解！答えは「${quiz.answer}」です。 (+${POINTS_PER_QUESTION} 点)`;
+            } else {
+                selectedButton.classList.add('incorrect');
+                feedbackContainer.classList.add('incorrect');
+                feedbackAnswerEl.textContent = `不正解...。正解は「${quiz.answer}」です。 (+0 点)`;
+            }
+
+            feedbackExplanationEl.textContent = quiz.explanation || '';
+            feedbackContainer.style.display = 'block';
+
+            Array.from(optionsContainer.children).forEach(button => {
+                if (button.innerText === quiz.answer) button.classList.add('correct');
+                button.disabled = true;
+            });
+
+            nextBtn.style.display = 'block';
+        }
+
+        function showResults() {
+            questionContainer.style.display = 'none';
+            resultContainer.style.display = 'block';
+            const maxScore = allQuizzes.length * POINTS_PER_QUESTION;
+            const percentage = Math.round((score / maxScore) * 100);
+            scoreTextEl.textContent = `${score} / ${maxScore} 点 (${percentage}%)`;
+
+            let rank = '';
+            if (percentage >= 95) rank = 'あなたはAREプロジェクトのコアメンバーかもしれない...！';
+            else if (percentage >= 80) rank = 'AREアプリ開発者レベル';
+            else if (percentage >= 60) rank = 'AREアプリのヘビーユーザー';
+            else if (percentage >= 40) rank = 'AREアプリに関心あり';
+            else if (percentage >= 20) rank = 'AREアプリ、ちょっと気になる？';
+            else rank = 'これからAREについて学びましょう！';
+
+            rankTextEl.textContent = rank;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            currentQuizIndex++;
+            if (currentQuizIndex < allQuizzes.length) showQuestion();
+            else showResults();
+        });
+
+        restartBtn.addEventListener('click', () => applyFiltersAndStart());
+
+        reloadBtn.addEventListener('click', () => loadQuizzes());
+
+        sourceSelect.addEventListener('change', () => {
+            if (sourceSelect.value === 'story' && (!storyQuizzes || storyQuizzes.length === 0)) {
+                sourceNote.textContent = 'story.json が存在しません — 両方または ARE を選択してください。';
+            } else {
+                sourceNote.textContent = '';
+            }
+        });
+
+        // initial load
+        loadQuizzes();
+
+    </script>
+</body>
+</html>

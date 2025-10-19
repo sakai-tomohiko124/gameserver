@@ -1,0 +1,9 @@
+Flask
+flet
+requests
+beautifulsoup4
+# awsgi (needed for Netlify deployment) depends on uvloop which is not supported on Windows.
+# Skip installing awsgi on Windows by using an environment marker.
+awsgi; sys_platform != "win32"
+flask-socketio
+python-socketio

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>しりとり - ゲーム</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  {% include '_header.html' %}
+  <main style="padding:40px;">
+    <h1>しりとり（簡易）</h1>
+    <p>しりとりのロジックを実装します。</p>
+    <div style="display:flex;gap:20px;">
+      <!-- 左カラム: プレイヤー一覧（狭め） -->
+      <div style="width:260px; flex-shrink:0;">
+        <label>あなたの名前: <input id="name" value="Player"></label>
+        <div style="margin-top:8px"><button id="create">ルーム作成</button> Room: <span id="room_id"></span></div>
+        <div style="margin-top:6px">参加: <input id="join_room"> <button id="join">参加</button></div>
+        <div style="margin-top:6px"><button id="start">ゲーム開始</button></div>
+        <hr>
+        <div>現在のプレイヤー一覧:</div>
+        <ul id="player_list" style="list-style:none;padding:6px;margin:6px 0;background:#f6f6f6;height:260px;overflow:auto;"> 
+          <!-- JS がここに <li data-pid=...> を挿入します -->
+        </ul>
+      </div>
+
+      <!-- 右カラム: 単語入力 / チャット / メッセージ（幅広め） -->
+      <div style="flex:1; min-width:420px;">
+        <div style="display:flex;gap:8px;align-items:center;">
+          <label style="flex:0 0 auto;">単語:</label>
+          <input id="word" style="flex:1 1 auto;"> <button id="play">出す</button>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
+          <label style="flex:0 0 auto;">チャット:</label>
+          <input id="chat" style="flex:1 1 auto;"> <button id="sendmsg">送信</button>
+        </div>
+        <hr>
+        <div style="display:flex;gap:12px;">
+          <div style="flex:1;">
+            <div style="margin-bottom:6px;font-weight:700;">メッセージ:</div>
+            <div id="messages" style="height:260px;overflow:auto;background:#fff;padding:6px;border:1px solid #ddd;"></div>
+          </div>
+          <div style="width:220px;flex-shrink:0;">
+            <div style="margin-bottom:6px;font-weight:700;">使用済み単語（履歴）</div>
+            <div id="used_words" style="height:260px;overflow:auto;background:#fff;padding:6px;border:1px solid #ddd;"></div>
+          </div>
+        </div>
+        <div id="bot-status" style="margin-top:8px;color:#666;display:none">Bot が入力中…</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <label>招待リンク: </label>
+      <input id="invite_link" style="width:60%;" readonly>
+      <button id="copy_invite">コピー</button>
+    </div>
+    <script src="{{ url_for('static', filename='shiritori.js') }}"></script>
+    <!-- inline SSE removed: `static/shiritori.js` manages SSE connections per-room -->
+  </main>
+</body>
+</html>

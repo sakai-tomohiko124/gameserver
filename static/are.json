@@ -1,0 +1,1170 @@
+    [
+      {
+        "id": 1,
+        "type": "true-false",
+        "question": "AREアプリの正式名称は「AREコミュニケーションオールマイティーアプリ」である。",
+        "options": ["〇", "×"],
+        "answer": "〇",
+        "explanation": "プロジェクトの正式名称は「ARE（アレ）コミュニケーションオールマイティーアプリ」です。"
+      },
+      {
+        "id": 2,
+        "type": "true-false",
+        "question": "AREアプリは有料であり、広告が表示される。",
+        "options": ["〇", "×"],
+        "answer": "×",
+        "explanation": "AREアプリは完全無料（広告なし）で提供される予定です。"
+      },
+      {
+        "id": 3,
+        "type": "true-false",
+        "question": "AREのリリース目標年は2035年である。",
+        "options": ["〇", "×"],
+        "answer": "〇",
+        "explanation": "設計書には「対象年：2035年までにリリース予定」と記載されています。"
+      },
+      {
+        "id": 4,
+        "type": "true-false",
+        "question": "AREの主要プラットフォームはPCで、スマートフォンはサブである。",
+        "options": ["〇", "×"],
+        "answer": "×",
+        "explanation": "主要プラットフォームはスマートフォン（メイン）で、タブレット・PCはサブとされています。"
+      },
+      {
+        "id": 5,
+        "type": "true-false",
+        "question": "バックエンドの開発にはプログラミング言語のJavaが使用される。",
+        "options": ["〇", "×"],
+        "answer": "×",
+        "explanation": "バックエンドにはPython（Flask）が使用されると記載されています。"
+      },
+      {
+        "id": 6,
+        "type": "true-false",
+        "question": "AIエンジンとして、OpenAIのGPT-4 APIが利用される。",
+        "options": ["〇", "×"],
+        "answer": "×",
+        "explanation": "AIエンジンにはGrok API（無料枠）が利用される予定です。"
+      },
+      {
+        "id": 7,
+        "type": "true-false",
+        "question": "AREはLINEのスタンプやグループチャット機能を統合対象としている。",
+        "options": ["〇", "×"],
+        "answer": "〇",
+        "explanation": "統合対象アプリケーション機能として、LINEのスタンプ、グループチャット、通話機能が挙げられています。"
+      },
+      {
+        "id": 8,
+        "type": "true-false",
+        "question": "リアルタイムメッセージング機能の実現難易度は「上級」に設定されている。",
+        "options": ["〇", "×"],
+        "answer": "×",
+        "explanation": "No.1のリアルタイムメッセージング機能の難易度は「簡単」に設定されています。"
+      },
+      {
+        "id": 9,
+        "type": "true-false",
+        "question": "メッセージの暗号化はエンドツーエンドで行われる。",
+        "options": ["〇", "×"],
+        "answer": "〇",
+        "explanation": "No.14のメッセージ暗号化は「エンドツーエンド暗号化」と記載されており、参考元はWhatsAppです。"
+      },
+      {
+        "id": 10,
+        "type": "true-false",
+        "question": "ユーザーはショート動画を投稿する機能を利用できない。",
+        "options": ["〇", "×"],
+        "answer": "×",
+        "explanation": "No.35の機能として「ショート動画」があり、TikTokを参考にしています。"
+      },
+      {
+        "id": 11,
+        "type": "true-false",
+        "question": "ビデオ通話中にバーチャル背景を設定する機能がある。",
+        "options": ["〇", "×"],
+        "answer": "〇",
+        "explanation": "No.47の機能として「バーチャル背景」があり、Zoomを参考にしています。"
+      },
+      {
+        "id": 12,
+        "type": "true-false",
+        "question": "チャット内で将棋やオセロなどのミニゲームをプレイできる。",
+        "options": ["〇", "×"],
+        "answer": "〇",
+        "explanation": "No.65に「将棋」、No.66に「オセロ」といったゲーム機能がリストアップされています。"
+      },
+      {
+        "id": 13,
+        "type": "true-false",
+        "question": "AIによる自動翻訳機能はGoogle翻訳を参考にしている。",
+        "options": ["〇", "×"],
+        "answer": "〇",
+        "explanation": "No.72の「自動翻訳」機能の参考元はGoogle翻訳です。"
+      },
+      {
+        "id": 14,
+        "type": "true-false",
+        "question": "AREには、チームで作業するためのワークスペース機能は含まれない。",
+        "options": ["〇", "×"],
+        "answer": "×",
+        "explanation": "No.81にSlackを参考にした「ワークスペース」機能が記載されています。"
+      },
+      {
+        "id": 15,
+        "type": "true-false",
+        "question": "セキュリティ機能として、DNAをパスワードとして利用する機能が計画されている。",
+        "options": ["〇", "×"],
+        "answer": "〇",
+        "explanation": "No.95の次世代機能として「DNAパスワード」が挙げられています。"
+      },
+      {
+        "id": 16,
+        "type": "true-false",
+        "question": "メタバース空間でのリアルタイム交流は、WebRTC技術を利用して実現される。",
+        "options": ["〇", "×"],
+        "answer": "×",
+        "explanation": "No.101の「メタバース空間」機能の技術はWebXRと記載されています。"
+      },
+      {
+        "id": 17,
+        "type": "true-false",
+        "question": "ユーザーの思考を読み取ってメッセージを入力する「脳波インターフェース」機能は、難易度「中級」である。",
+        "options": ["〇", "×"],
+        "answer": "×",
+        "explanation": "No.109の「脳波インターフェース」の難易度は「上級」です。"
+      },
+      {
+        "id": 18,
+        "type": "true-false",
+        "question": "AREはユーザーのCO2排出量を自動で追跡するカーボンフットプリント機能を持つ。",
+        "options": ["〇", "×"],
+        "answer": "〇",
+        "explanation": "No.120のライフスタイル・ウェルネス機能として「カーボンフットプリント」が記載されています。"
+      },
+      {
+        "id": 19,
+        "type": "true-false",
+        "question": "システムアーキテクチャは、モノリシックアーキテクチャを採用している。",
+        "options": ["〇", "×"],
+        "answer": "×",
+        "explanation": "システム構成図には「マイクロサービス群」と記載されており、マイクロサービスアーキテクチャを採用しています。"
+      },
+      {
+        "id": 20,
+        "type": "true-false",
+        "question": "通信層のセキュリティにはTLS 1.3が採用されている。",
+        "options": ["〇", "×"],
+        "answer": "〇",
+        "explanation": "セキュリティ設計の通信層の技術として「TLS 1.3, HSTS」が記載されています。"
+        },
+        {
+    "id": 75,
+    "type": "true-false",
+    "question": "現実世界をデジタル空間に複製する「デジタルツイン」機能が計画されている。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "No.105に「デジタルツイン」機能が記載されています。"
+  },
+  {
+    "id": 76,
+    "type": "true-false",
+    "question": "AIが自動で会話の要約を生成するbotは、NLP（自然言語処理）技術を利用する。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "No.112の「自動要約bot」の技術はNLPと記載されています。"
+  },
+  {
+    "id": 77,
+    "type": "true-false",
+    "question": "スマートホームとの連携機能は計画されていない。",
+    "options": ["〇", "×"],
+    "answer": "×",
+    "explanation": "No.119に「スマートホーム統合」機能が記載されています。"
+  },
+  {
+    "id": 78,
+    "type": "true-false",
+    "question": "ユーザーのプロフィールはNFTとしてブロックチェーン上に記録できる。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "No.121に「NFTプロフィール」機能が記載されています。"
+  },
+  {
+    "id": 79,
+    "type": "true-false",
+    "question": "セキュリティ設計の認証層では、OAuth 2.0が利用される。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "認証層の技術として「多要素認証、OAuth 2.0」が挙げられています。"
+  },
+  {
+    "id": 80,
+    "type": "true-false",
+    "question": "インフラ最適化の一環として、CDNによるコンテンツ配信が行われる。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "インフラ最適化の項目に「CDNによるコンテンツ配信」とあります。"
+  },
+  {
+    "id": 81,
+    "type": "true-false",
+    "question": "中優先度（正式版リリース対象）の機能には、ゲーム機能が含まれる。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "中優先度の対象として「ゲーム機能(51-70)」が挙げられています。"
+  },
+  {
+    "id": 82,
+    "type": "true-false",
+    "question": "未来版3.0は、2035年9月にリリースされ、次世代プラットフォームとなることを目指す。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "リリース戦略の表にそのように記載されています。"
+  },
+  {
+    "id": 83,
+    "type": "true-false",
+    "question": "無料HTTPS化サービスとして「Let's Encrypt」の利用が記載されている。",
+    "options": ["〇", "×"],
+    "answer": "×",
+    "explanation": "無料サービス活用戦略には「No-IP: 無料HTTPS化サービス」と記載されています。"
+  },
+  {
+    "id": 84,
+    "type": "true-false",
+    "question": "競合との差別化要因として「ワンサイズフィッツオールからの脱却」を掲げている。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "カスタマイズ性の優位点として「ワンサイズフィッツオール脱却」とあります。"
+  },
+  {
+    "id": 85,
+    "type": "true-false",
+    "question": "AREは、8大アプリの機能を統合することを目標としている。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "統合性の詳細に「8大アプリ機能の統合」と記載されています。"
+  },
+  {
+    "id": 86,
+    "type": "true-false",
+    "question": "開発者情報は、プロジェクトの初期段階から公開されている。",
+    "options": ["〇", "×"],
+    "answer": "×",
+    "explanation": "プロジェクト概要に「開発者：現在不明」と記載されています。"
+  },
+  {
+    "id": 87,
+    "type": "true-false",
+    "question": "フロントエンドでは、JavaScriptのバージョンとしてES2035が使用される。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "技術スタックのフロントエンド技術として「JavaScript ES2035」と記載されています。"
+  },
+  {
+    "id": 88,
+    "type": "true-false",
+    "question": "リアルタイム通話機能の実現には、WebSocketのみが使用される。",
+    "options": ["〇", "×"],
+    "answer": "×",
+    "explanation": "リアルタイム通信にはWebSocketとWebRTCが使用されます。"
+  },
+  {
+    "id": 89,
+    "type": "true-false",
+    "question": "メッセージの既読・未読表示機能の参考元はSlackである。",
+    "options": ["〇", "×"],
+    "answer": "×",
+    "explanation": "No.5の「既読・未読表示」の参考元はLINEです。"
+  },
+  {
+    "id": 90,
+    "type": "true-false",
+    "question": "ユーザーのプロフィールに設定できるのは、アバター画像のみである。",
+    "options": ["〇", "×"],
+    "answer": "×",
+    "explanation": "No.17の「プロフィール設定」には「アバター・ステータス設定」とあります。"
+  },
+  {
+    "id": 91,
+    "type": "true-false",
+    "question": "画像フィルター機能は、リアルタイムでの加工に対応している。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "No.32の「画像フィルター」は「リアルタイム画像加工」と説明されています。"
+  },
+  {
+    "id": 92,
+    "type": "true-false",
+    "question": "画面共有機能の参考元はGoogle Meetである。",
+    "options": ["〇", "×"],
+    "answer": "×",
+    "explanation": "No.45の「画面共有」機能の参考元はSlackです。"
+  },
+  {
+    "id": 93,
+    "type": "true-false",
+    "question": "通話内容を録音して保存する機能がある。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "No.46に「通話録音」機能が記載されています。"
+  },
+  {
+    "id": 94,
+    "type": "true-false",
+    "question": "ミニゲームの「トモヒロウ」は、カードゲームの「ポーカー」のことである。",
+    "options": ["〇", "×"],
+    "answer": "×",
+    "explanation": "No.61の「トモヒロウ」は「大富豪」のことです。"
+  },
+  {
+    "id": 95,
+    "type": "true-false",
+    "question": "AIが自動で返信候補を生成する「スマート返信」機能の参考元はGmailである。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "No.75の「スマート返信」の参考元はGmailです。"
+  },
+  {
+    "id": 96,
+    "type": "true-false",
+    "question": "ビジネス機能として、プラグインで機能を拡張するシステムが計画されている。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "No.92に「拡張機能（プラグインシステム）」が記載されています。"
+  },
+  {
+    "id": 97,
+    "type": "true-false",
+    "question": "AIが自動でシステムの脆弱性を修正する「自己修復セキュリティ」機能がある。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "No.97に「自己修復セキュリティ」機能が記載されています。"
+  },
+  {
+    "id": 98,
+    "type": "true-false",
+    "question": "触感を伝える通信機能「触覚フィードバック」には、ハプティック技術が利用される。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "No.103の「触覚フィードバック」の技術はハプティックです。"
+  },
+  {
+    "id": 99,
+    "type": "true-false",
+    "question": "ユーザー個人の知識ネットワークを可視化する「知識グラフ」機能がある。",
+    "options": ["〇", "×"],
+    "answer": "〇",
+    "explanation": "No.116に「知識グラフ」機能が記載されています。"
+  },
+  {
+    "id": 100,
+    "type": "true-false",
+    "question": "デジタル資産を継承する「デジタル遺産管理」機能は、Web3技術を利用する。",
+    "options": ["〇", "×"],
+    "answer": "×",
+    "explanation": "No.122の「デジタル遺産管理」の技術はBlockchainと記載されています。"
+  },
+  {
+    "id": 101,
+    "type": "multiple-choice",
+    "question": "AREが搭載する革新的な機能の総数はいくつですか？",
+    "options": ["100", "124", "150", "200"],
+    "answer": "124",
+    "explanation": "プロジェクト概要には「124の革新的機能を搭載した」と記載されています。"
+  },
+  {
+    "id": 102,
+    "type": "multiple-choice",
+    "question": "AREのバックエンドで採用されている技術の組み合わせとして正しいものはどれですか？",
+    "options": ["Ruby (Rails)", "Java (Spring)", "Python (Flask)", "Node.js (Express)"],
+    "answer": "Python (Flask)",
+    "explanation": "技術スタックのバックエンド項目には「Python (Flask)」と記載されています。"
+  },
+  {
+    "id": 103,
+    "type": "multiple-choice",
+    "question": "次のうち、AREが統合対象としていないアプリケーションはどれですか？",
+    "options": ["Instagram", "Slack", "Twitter (X)", "Google Meet"],
+    "answer": "Twitter (X)",
+    "explanation": "統合対象アプリケーションのリストにTwitter（X）は含まれていません。"
+  },
+  {
+    "id": 104,
+    "type": "multiple-choice",
+    "question": "「メッセージ暗号化」機能の難易度として設定されているのはどれですか？",
+    "options": ["簡単", "中級", "上級", "設定なし"],
+    "answer": "上級",
+    "explanation": "No.14の「メッセージ暗号化」機能の難易度は「上級」に設定されています。"
+  },
+  {
+    "id": 105,
+    "type": "multiple-choice",
+    "question": "AR/VRフィルター機能（No.37）の実現難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "上級",
+    "explanation": "No.37「AR/VRフィルター」の難易度は「上級」です。"
+  },
+  {
+    "id": 106,
+    "type": "multiple-choice",
+    "question": "ゲーム機能「将棋」（No.65）の難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "上級",
+    "explanation": "No.65「将棋」の難易度は「上級」です。"
+  },
+  {
+    "id": 107,
+    "type": "multiple-choice",
+    "question": "AIがユーザーのスケジュール調整を提案する「スケジュール提案」機能（No.80）の難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "上級",
+    "explanation": "No.80「スケジュール提案」の難易度は「上級」です。"
+  },
+  {
+    "id": 108,
+    "type": "multiple-choice",
+    "question": "「量子暗号化通信」を実現するために利用される技術は何ですか？",
+    "options": ["ブロックチェーン", "生体認証", "量子もつれ", "準同型暗号"],
+    "answer": "量子もつれ",
+    "explanation": "No.93「量子暗号化通信」の説明には「量子もつれを利用した究極の暗号化」とあります。"
+  },
+  {
+    "id": 109,
+    "type": "multiple-choice",
+    "question": "3Dホログラムでの通話を可能にする「ホログラム通話」の基盤技術は何ですか？",
+    "options": ["WebXR", "WebRTC", "ホログラフィー", "ハプティック"],
+    "answer": "ホログラフィー",
+    "explanation": "No.102「ホログラム通話」の技術は「ホログラフィー」と記載されています。"
+  },
+  {
+    "id": 110,
+    "type": "multiple-choice",
+    "question": "ユーザーのバイタルサインを統合管理する「ヘルスモニタリング」機能が利用する技術は何ですか？",
+    "options": ["IoT Sensors", "Health API", "Home Automation", "Environment API"],
+    "answer": "Health API",
+    "explanation": "No.117「ヘルスモニタリング」の技術は「Health API」と記載されています。"
+  },
+  {
+    "id": 111,
+    "type": "multiple-choice",
+    "question": "フロントエンドからバックエンドへのAPIリクエストを管理するコンポーネントは何ですか？",
+    "options": ["データレイヤ", "マイクロサービス群", "API Gateway", "PWA"],
+    "answer": "API Gateway",
+    "explanation": "システム構成図は「フロントエンド → API Gateway → マイクロサービス群 → データレイヤ」となっています。"
+  },
+  {
+    "id": 112,
+    "type": "multiple-choice",
+    "question": "セキュリティ設計において、耐量子暗号アルゴリズムとして採用されているものはどれですか？",
+    "options": ["AES-256", "RSA-4096", "CRYSTALS-Kyber", "SHA-3"],
+    "answer": "CRYSTALS-Kyber",
+    "explanation": "量子対応のセキュリティ技術として「CRYSTALS-Kyber」が挙げられています。"
+  },
+  {
+    "id": 113,
+    "type": "multiple-choice",
+    "question": "開発スケジュールのPhase 2（機能拡張期間）で主に実装される機能群はどれですか？",
+    "options": ["チャット・通話機能", "VR/AR・量子機能", "ゲーム・AI・ビジネス機能", "基本UI/UX設計"],
+    "answer": "ゲーム・AI・ビジネス機能",
+    "explanation": "Phase 2の目標は「ゲーム・AI・ビジネス機能の実装」です。"
+  },
+  {
+    "id": 114,
+    "type": "multiple-choice",
+    "question": "2027年3月にリリース予定の「正式版 1.0」の対象ユーザー規模はどのくらいですか？",
+    "options": ["100名", "1,000名", "10,000名", "100,000名"],
+    "answer": "10,000名",
+    "explanation": "正式版 1.0のユーザー規模は「一般公開（10,000名）」とされています。"
+  },
+  {
+    "id": 115,
+    "type": "multiple-choice",
+    "question": "AWS無料枠で提供されるRDS（データベース）の月間利用可能時間はどのくらいですか？",
+    "options": ["100時間", "500時間", "750時間", "1000時間"],
+    "answer": "750時間",
+    "explanation": "無料サービス活用戦略に「RDS 750時間/月」と記載されています。"
+  },
+  {
+    "id": 116,
+    "type": "multiple-choice",
+    "question": "次のうち、AREのターゲットユーザーとして最も当てはまらないものはどれですか？",
+    "options": ["家族とカジュアルに利用する人", "チームでプロジェクト管理をする人", "VR/ARの最新技術を試したい人", "オフラインでの利用を主とする人"],
+    "answer": "オフラインでの利用を主とする人",
+    "explanation": "AREはオンラインでのコミュニケーションを主眼としており、オフライン利用は主目的ではありません。"
+  },
+  {
+    "id": 117,
+    "type": "multiple-choice",
+    "question": "AREが競合優位性として掲げる「プライバシー重視」の根拠となる技術はどれですか？",
+    "options": ["広告なし・課金なし", "量子暗号化・分散管理", "用途別の柔軟な設定", "8大アプリ機能の統合"],
+    "answer": "量子暗号化・分散管理",
+    "explanation": "プライバシー重視の詳細として「量子暗号化・分散管理」が挙げられています。"
+  },
+  {
+    "id": 118,
+    "type": "multiple-choice",
+    "question": "このプロジェクト設計書の作成日はいつですか？",
+    "options": ["2023年10月", "2024年10月", "2025年10月", "2035年10月"],
+    "answer": "2025年10月",
+    "explanation": "プロジェクト概要に「作成日：2025年10月」と記載されています。"
+  },
+  {
+    "id": 119,
+    "type": "multiple-choice",
+    "question": "技術スタックにおいて、クラウドサービスは何を利用しますか？",
+    "options": ["Google Cloud Platform", "Microsoft Azure", "Amazon Web Services (AWS)", "IBM Cloud"],
+    "answer": "Amazon Web Services (AWS)",
+    "explanation": "クラウドの項目に「AWS（無料枠活用）」と記載されています。"
+  },
+  {
+    "id": 120,
+    "type": "multiple-choice",
+    "question": "「スレッド機能」（No.10）の参考元とされているアプリケーションはどれですか？",
+    "options": ["LINE", "Slack", "Discord", "WhatsApp"],
+    "answer": "Slack",
+    "explanation": "No.10「スレッド機能」の参考元はSlackです。"
+  },
+  {
+    "id": 121,
+    "type": "multiple-choice",
+    "question": "自動翻訳機能（No.15）の参考元とされているアプリケーションはどれですか？",
+    "options": ["DeepL", "Google翻訳", "WeChat", "LINE"],
+    "answer": "WeChat",
+    "explanation": "No.15「自動翻訳」の参考元はWeChatです。なお、No.72のAIによる多言語翻訳の参考元はGoogle翻訳です。"
+  },
+  {
+    "id": 122,
+    "type": "multiple-choice",
+    "question": "メディア・コンテンツ機能の中で、最も難易度が高い（上級）とされているものは次のうちどれですか？",
+    "options": ["動画送受信", "ストーリー機能", "ライブ配信", "画像・動画編集"],
+    "answer": "ライブ配信",
+    "explanation": "リストの中で、ライブ配信（No.34）とAR/VRフィルター（No.37）が「上級」に設定されています。"
+  },
+  {
+    "id": 123,
+    "type": "multiple-choice",
+    "question": "通話・ビデオ機能の中で、難易度が「簡単」とされているものはどれですか？",
+    "options": ["音声通話", "ビデオ通話", "画面共有", "通話履歴"],
+    "answer": "通話履歴",
+    "explanation": "通話・ビデオ機能の中で、通話中チャット（No.49）と通話履歴（No.50）の難易度が「簡単」です。"
+  },
+  {
+    "id": 124,
+    "type": "multiple-choice",
+    "question": "「画像認識」機能（No.74）の参考元とされているサービスはどれですか？",
+    "options": ["Google Vision", "Amazon Rekognition", "Microsoft Azure Computer Vision", "独自開発"],
+    "answer": "Google Vision",
+    "explanation": "No.74「画像認識」の参考元はGoogle Visionです。"
+  },
+  {
+    "id": 125,
+    "type": "multiple-choice",
+    "question": "「分散身元管理」機能（No.100）で利用される技術は何ですか？",
+    "options": ["OAuth 2.0", "DID", "JWT", "TOTP"],
+    "answer": "DID",
+    "explanation": "No.100「分散身元管理」の技術は「DID（Decentralized Identifier）」と記載されています。"
+  },
+  {
+    "id": 126,
+    "type": "multiple-choice",
+    "question": "現実空間に情報をオーバーレイ表示する「現実拡張チャット」で利用される技術は何ですか？",
+    "options": ["WebXR", "Motion Capture", "AR Glass", "Collaboration VR"],
+    "answer": "AR Glass",
+    "explanation": "No.107「現実拡張チャット」の技術は「AR Glass」と記載されています。"
+  },
+  {
+    "id": 127,
+    "type": "multiple-choice",
+    "question": "個人の知識ネットワークを可視化する「知識グラフ」機能（No.116）の難易度はどれですか？",
+    "options": ["中級", "上級", "簡単", "独自"],
+    "answer": "上級",
+    "explanation": "No.116「知識グラフ」の難易度は「上級」です。"
+  },
+  {
+    "id": 128,
+    "type": "multiple-choice",
+    "question": "フォルダ構成において、ゲーム関連のJavaScriptファイルが格納されるディレクトリはどれですか？",
+    "options": ["/js/", "/assets/games/", "/games/", "/html/games/"],
+    "answer": "/games/",
+    "explanation": "フォルダ構成図には、ルート直下に `/games/` ディレクトリがあり、その中にdaifugo.jsなどが格納されています。"
+  },
+  {
+    "id": 129,
+    "type": "multiple-choice",
+    "question": "パフォーマンス最適化のためにService Workerが利用される目的は何ですか？",
+    "options": ["高速な計算処理", "キャッシュ戦略", "サーバー負荷分散", "リアルタイム通信"],
+    "answer": "キャッシュ戦略",
+    "explanation": "フロントエンド最適化の項目に「Service Workerによるキャッシュ戦略」と記載されています。"
+  },
+  {
+    "id": 130,
+    "type": "multiple-choice",
+    "question": "Phase 1（基盤開発期間）で実装される機能の範囲は、機能リストの何番から何番までですか？",
+    "options": ["1-15番", "1-50番", "1-80番", "1-92番"],
+    "answer": "1-50番",
+    "explanation": "Phase 1の主要機能は「1-50番の機能」と記載されています。"
+  },
+  {
+    "id": 131,
+    "type": "multiple-choice",
+    "question": "開発優先度において「高優先（ベータ版リリース対象）」に分類されている機能は次のうちどれですか？",
+    "options": ["ビデオ通話", "グループチャット", "AI チャットボット", "VR/AR機能"],
+    "answer": "グループチャット",
+    "explanation": "高優先リストにはグループチャット(3)が含まれています。ビデオ通話(42)やAIチャットボット(71)は中優先です。"
+  },
+  {
+    "id": 132,
+    "type": "multiple-choice",
+    "question": "拡張版 2.0がリリースされる時期はいつですか？",
+    "options": ["2027年3月", "2027年9月", "2035年3月", "2035年9月"],
+    "answer": "2027年9月",
+    "explanation": "リリース戦略の表によると、拡張版 2.0は2027年9月にリリース予定です。"
+  },
+  {
+    "id": 133,
+    "type": "multiple-choice",
+    "question": "AREが目指す「次世代のコミュニケーション標準」を確立するための計画期間は何年間ですか？",
+    "options": ["1年間", "2年間", "3年間", "10年間"],
+    "answer": "3年間",
+    "explanation": "まとめに「3年間の段階的開発計画により…」とあり、Phase 1から2までが3年間に相当します。（Phase3は長期）"
+  },
+  {
+    "id": 134,
+    "type": "multiple-choice",
+    "question": "コンセプトとして掲げられている言葉はどれですか？",
+    "options": ["みんなのチャットアプリ", "ビジネス特化型ツール", "超絶モダンな最先端チャットアプリ", "安全第一のメッセージアプリ"],
+    "answer": "超絶モダンな最先端チャットアプリ",
+    "explanation": "プロジェクト基本仕様のコンセプト欄に記載されています。"
+  },
+  {
+    "id": 135,
+    "type": "multiple-choice",
+    "question": "セキュリティの暗号化層で使われる暗号化方式の組み合わせで正しいものはどれですか？",
+    "options": ["AES-128, RSA-2048", "AES-256, RSA-4096", "DES, RSA-1024", "Blowfish, ECC"],
+    "answer": "AES-256, RSA-4096",
+    "explanation": "暗号化層の技術として「AES-256, RSA-4096」が記載されています。"
+  },
+  {
+    "id": 136,
+    "type": "multiple-choice",
+    "question": "「ファイル共有」機能（No.29）の参考元は何ですか？",
+    "options": ["LINE", "Slack", "Google Drive", "Dropbox"],
+    "answer": "Slack",
+    "explanation": "No.29「ファイル共有」の参考元はSlackです。"
+  },
+  {
+    "id": 137,
+    "type": "multiple-choice",
+    "question": "通話・ビデオ機能の中で、参考元が「独自」とされているものは次のうちどれですか？",
+    "options": ["ビデオ通話", "画面共有", "バーチャル背景", "通話録音"],
+    "answer": "通話録音",
+    "explanation": "リストの中で「通話録音」（No.46）の参考元が「独自」となっています。"
+  },
+  {
+    "id": 138,
+    "type": "multiple-choice",
+    "question": "ゲーム機能の中で、唯一参考元が明記されているものはどれですか？",
+    "options": ["協力ゲーム", "ミニゲーム", "将棋", "ランキング"],
+    "answer": "ミニゲーム",
+    "explanation": "No.51「ミニゲーム」の参考元はWeChatと明記されています。他は主に「独自」です。"
+  },
+  {
+    "id": 139,
+    "type": "multiple-choice",
+    "question": "ビジネス・生産性機能の中で、参考元がGoogle Docsとされているものはどれですか？",
+    "options": ["タスク管理", "カレンダー統合", "ファイル共同編集", "プロジェクト管理"],
+    "answer": "ファイル共同編集",
+    "explanation": "No.84「ファイル共同編集」の参考元がGoogle Docsです。"
+  },
+  {
+    "id": 140,
+    "type": "multiple-choice",
+    "question": "ブロックチェーンベースのID管理を行う機能は何ですか？",
+    "options": ["バイオメトリクス認証", "DNAパスワード", "ゼロナレッジプルーフ", "分散身元管理"],
+    "answer": "分散身元管理",
+    "explanation": "No.100「分散身元管理」はブロックチェーンベースのID管理と説明されています。"
+  },
+  {
+    "id": 141,
+    "type": "multiple-choice",
+    "question": "表情や声から感情を自動検出する「感情AI」で利用される技術は何ですか？",
+    "options": ["BCI", "Emotion AI", "Neural Network", "NLP"],
+    "answer": "Emotion AI",
+    "explanation": "No.110「感情AI」の技術は「Emotion AI」と記載されています。"
+  },
+  {
+    "id": 142,
+    "type": "multiple-choice",
+    "question": "デジタル資産の継承を可能にする「デジタル遺産管理」で利用される技術は何ですか？",
+    "options": ["Web3", "Blockchain", "NFT", "Geo-temporal"],
+    "answer": "Blockchain",
+    "explanation": "No.122「デジタル遺産管理」の技術は「Blockchain」です。"
+  },
+  {
+    "id": 143,
+    "type": "multiple-choice",
+    "question": "フォルダ構成において、メインのHTMLファイル名は何ですか？",
+    "options": ["main.html", "home.html", "app.html", "index.html"],
+    "answer": "index.html",
+    "explanation": "フォルダ構成図の `/public/` ディレクトリ直下に `index.html` があります。"
+  },
+  {
+    "id": 144,
+    "type": "multiple-choice",
+    "question": "パフォーマンス最適化のため、WebAssemblyが利用される目的は何ですか？",
+    "options": ["キャッシュ効率化", "高速処理", "UIの動的更新", "APIリクエスト管理"],
+    "answer": "高速処理",
+    "explanation": "フロントエンド最適化の項目に「WebAssemblyによる高速処理」とあります。"
+  },
+  {
+    "id": 145,
+    "type": "multiple-choice",
+    "question": "Phase 3で先行実装される「未来技術」に含まれないものはどれですか？",
+    "options": ["メタバース対応", "量子暗号", "脳波インターフェース", "AI統合"],
+    "answer": "AI統合",
+    "explanation": "Phase 3の未来技術はVR/AR・量子・Web3機能が中心です。AI統合はPhase 2の技術革新に含まれます。"
+  },
+  {
+    "id": 146,
+    "type": "multiple-choice",
+    "question": "開発優先度「低優先（将来のアップデート対象）」に分類されている機能は次のうちどれですか？",
+    "options": ["ストーリー機能", "ワークスペース", "量子暗号化", "ゲーム機能"],
+    "answer": "量子暗号化",
+    "explanation": "低優先リストに「量子暗号化(93)」が含まれています。"
+  },
+  {
+    "id": 147,
+    "type": "multiple-choice",
+    "question": "アルファ版のリリースで対象となる機能群は何ですか？",
+    "options": ["基本チャット機能 (1-15)", "全50機能 (1-50)", "全80機能 (1-80)", "全124機能"],
+    "answer": "基本チャット機能 (1-15)",
+    "explanation": "リリース戦略の表で、アルファ版の対象機能は「基本チャット機能 (1-15)」です。"
+  },
+  {
+    "id": 148,
+    "type": "multiple-choice",
+    "question": "無料サービス活用戦略として挙げられていないAPIはどれですか？",
+    "options": ["Grok API", "YouTube API", "Gmail API", "Maps API"],
+    "answer": "Maps API",
+    "explanation": "無料サービス活用戦略のリストにMaps APIは含まれていません。"
+  },
+  {
+    "id": 149,
+    "type": "multiple-choice",
+    "question": "競合優位性として掲げられている「先進技術」が指すのは、主に何年の技術トレンドですか？",
+    "options": ["2025年", "2030年", "2035年", "2040年"],
+    "answer": "2035年",
+    "explanation": "先進技術の詳細として「2035年技術の先行実装」が挙げられています。"
+  },
+  {
+    "id": 150,
+    "type": "multiple-choice",
+    "question": "法的な制約事項として、対応が必要とされている法律は何ですか？",
+    "options": ["著作権法", "データ保護法", "独占禁止法", "電子署名法"],
+    "answer": "データ保護法",
+    "explanation": "重要な制約事項に「法的規制（データ保護法等）への対応が必要」とあります。"
+  },
+  {
+    "id": 151,
+    "type": "multiple-choice",
+    "question": "データベースをSQLiteからPostgreSQLへ「段階的移行」する理由として最も考えられるものはどれですか？",
+    "options": ["開発速度の向上", "セキュリティの強化", "スケーラビリティへの対応", "コスト削減"],
+    "answer": "スケーラビリティへの対応",
+    "explanation": "SQLiteは軽量で初期開発に適しますが、ユーザー数の増加に伴い、より高機能で大規模なPostgreSQLへ移行するのは一般的なスケーラビリティ対応です。"
+  },
+  {
+    "id": 152,
+    "type": "multiple-choice",
+    "question": "統合対象のSlackの機能として挙げられていないものはどれですか？",
+    "options": ["ワークスペース", "スレッド", "ボット統合", "ビデオ会議"],
+    "answer": "ビデオ会議",
+    "explanation": "Slackの統合対象機能は「ワークスペース、スレッド、ボット統合」です。ビデオ会議はGoogle Meetが対象です。"
+  },
+  {
+    "id": 153,
+    "type": "multiple-choice",
+    "question": "「絵文字リアクション」（No.11）機能の参考元は何ですか？",
+    "options": ["LINE", "Facebook", "Discord", "Slack"],
+    "answer": "Slack",
+    "explanation": "No.11「絵文字リアクション」の参考元はSlackです。"
+  },
+  {
+    "id": 154,
+    "type": "multiple-choice",
+    "question": "ユーザーの位置情報を共有する機能（No.22）の難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "中級",
+    "explanation": "No.22「位置情報共有」の難易度は「中級」です。"
+  },
+  {
+    "id": 155,
+    "type": "multiple-choice",
+    "question": "ショート動画に音楽を追加する「音楽同期」機能（No.36）の参考元は何ですか？",
+    "options": ["Instagram", "YouTube Shorts", "TikTok", "WeChat"],
+    "answer": "TikTok",
+    "explanation": "No.36「音楽同期」の参考元はTikTokです。"
+  },
+  {
+    "id": 156,
+    "type": "multiple-choice",
+    "question": "グループ音声通話機能（No.43）の難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "上級",
+    "explanation": "No.43「グループ音声通話」の難易度は「上級」です。"
+  },
+  {
+    "id": 157,
+    "type": "multiple-choice",
+    "question": "ゲーム機能の中で、参考元が「Slack」とされているものはどれですか？",
+    "options": ["ミニゲーム", "ランキング", "投票機能", "じゃんけん"],
+    "answer": "投票機能",
+    "explanation": "No.56「投票機能」の参考元がSlackです。"
+  },
+  {
+    "id": 158,
+    "type": "multiple-choice",
+    "question": "30以上の言語インターフェースに対応する機能（No.91）の難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "中級",
+    "explanation": "No.91「多言語対応」の難易度は「中級」です。"
+  },
+  {
+    "id": 159,
+    "type": "multiple-choice",
+    "question": "暗号化したまま計算処理を行う「秘匿計算」で利用される技術は何ですか？",
+    "options": ["量子暗号", "ゼロナレッジプルーフ", "準同型暗号", "ブロックチェーン"],
+    "answer": "準同型暗号",
+    "explanation": "No.99「秘匿計算」の技術は「準同型暗号」です。"
+  },
+  {
+    "id": 160,
+    "type": "multiple-choice",
+    "question": "AI制御のリアルタイムアバターを実現する「バーチャルアバター」で利用される技術は何ですか？",
+    "options": ["WebXR", "Motion Capture", "AR Glass", "IoTセンサー"],
+    "answer": "Motion Capture",
+    "explanation": "No.106「バーチャルアバター」の技術は「Motion Capture」です。"
+  },
+  {
+    "id": 161,
+    "type": "multiple-choice",
+    "question": "リアルタイムで多言語の音声翻訳を行う「多言語同時通訳」で利用される技術は何ですか？",
+    "options": ["NLP", "Neural Network", "Real-time Translation", "Knowledge Graph"],
+    "answer": "Real-time Translation",
+    "explanation": "No.115「多言語同時通訳」の技術は「Real-time Translation」です。"
+  },
+  {
+    "id": 162,
+    "type": "multiple-choice",
+    "question": "室温・湿度・空気質などを共有する「環境センサー連携」で利用される技術は何ですか？",
+    "options": ["Health API", "IoT Sensors", "Home Automation", "Environment API"],
+    "answer": "IoT Sensors",
+    "explanation": "No.118「環境センサー連携」の技術は「IoT Sensors」です。"
+  },
+  {
+    "id": 163,
+    "type": "multiple-choice",
+    "question": "フォルダ構成において、スタイルシート（CSS）ファイルが格納されるディレクトリはどれですか？",
+    "options": ["/assets/", "/public/", "/css/", "/style/"],
+    "answer": "/css/",
+    "explanation": "フォルダ構成図には、`/public/assets/css/`という階層でCSSファイルが格納されています。"
+  },
+  {
+    "id": 164,
+    "type": "multiple-choice",
+    "question": "バックエンド最適化のために利用される非同期処理の仕組みは何ですか？",
+    "options": ["ロードバランサー", "CDN", "メッセージキュー", "データベースレプリケーション"],
+    "answer": "メッセージキュー",
+    "explanation": "バックエンド最適化の項目に「非同期処理とメッセージキュー」と記載されています。"
+  },
+  {
+    "id": 165,
+    "type": "multiple-choice",
+    "question": "開発スケジュールのPhase 1で構築される「技術基盤」に含まれないものはどれですか？",
+    "options": ["認証システム", "データベース設計", "基本UI/UX", "ゲームエンジン"],
+    "answer": "ゲームエンジン",
+    "explanation": "Phase 1の技術基盤は認証システム、データベース設計、基本UI/UXです。ゲームエンジンはPhase 2の技術革新に含まれます。"
+  },
+  {
+    "id": 166,
+    "type": "multiple-choice",
+    "question": "開発優先度「中優先（正式版リリース対象）」に分類されている機能は次のうちどれですか？",
+    "options": ["グループチャット", "プロフィール設定", "ビデオ通話", "メタバース機能"],
+    "answer": "ビデオ通話",
+    "explanation": "中優先リストに「ビデオ通話(42)」が含まれています。"
+  },
+  {
+    "id": 167,
+    "type": "multiple-choice",
+    "question": "「未来版 3.0」のリリース目標はいつですか？",
+    "options": ["2027年9月", "2030年9月", "2035年9月", "未定"],
+    "answer": "2035年9月",
+    "explanation": "リリース戦略の表で、未来版 3.0の時期は「2035年9月」とされています。"
+  },
+  {
+    "id": 168,
+    "type": "multiple-choice",
+    "question": "GitHubを無料サービスとして活用する目的は何ですか？",
+    "options": ["AI機能の実装", "ソースコード管理", "HTTPS化", "動画機能の実装"],
+    "answer": "ソースコード管理",
+    "explanation": "無料サービス活用戦略に「GitHub: 無料のソースコード管理」とあります。"
+  },
+  {
+    "id": 169,
+    "type": "multiple-choice",
+    "question": "競合優位性として掲げている「カスタマイズ性」が目指すものは何ですか？",
+    "options": ["全ユーザーに同じ機能を提供", "用途別の柔軟な設定", "広告のパーソナライズ", "オープンソース化"],
+    "answer": "用途別の柔軟な設定",
+    "explanation": "カスタマイズ性の詳細に「用途別の柔軟な設定」とあります。"
+  },
+  {
+    "id": 170,
+    "type": "multiple-choice",
+    "question": "この設計書が対象としているアプリケーションのバージョンはいくつですか？",
+    "options": ["0.9.0", "1.0.0", "2.0.0", "3.0.0"],
+    "answer": "1.0.0",
+    "explanation": "プロジェクト概要に「バージョン：1.0.0」と記載されています。"
+  },
+  {
+    "id": 171,
+    "type": "multiple-choice",
+    "question": "リアルタイム通信でチャットや通話機能を実現する技術の組み合わせはどれですか？",
+    "options": ["HTTP/2, gRPC", "WebSocket, WebRTC", "REST API, Long Polling", "GraphQL, MQTT"],
+    "answer": "WebSocket, WebRTC",
+    "explanation": "技術スタックのリアルタイム通信に「WebSocket, WebRTC」とあります。"
+  },
+  {
+    "id": 172,
+    "type": "multiple-choice",
+    "question": "Gmailから統合する機能として挙げられているものはどれですか？",
+    "options": ["メール統合、スマート返信", "カレンダー連携", "ファイル添付", "迷惑メールフィルタ"],
+    "answer": "メール統合、スマート返信",
+    "explanation": "統合対象アプリケーションとして、Gmailの「メール統合、スマート返信」が挙げられています。"
+  },
+  {
+    "id": 173,
+    "type": "multiple-choice",
+    "question": "「メッセージ転送」（No.8）機能の参考元は何ですか？",
+    "options": ["Slack", "WeChat", "WhatsApp", "LINE"],
+    "answer": "LINE",
+    "explanation": "No.8「メッセージ転送」の参考元はLINEです。"
+  },
+  {
+    "id": 174,
+    "type": "multiple-choice",
+    "question": "友達の追加・管理機能（No.18）の難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "中級",
+    "explanation": "No.18「友達追加・管理」の難易度は「中級」です。"
+  },
+  {
+    "id": 175,
+    "type": "multiple-choice",
+    "question": "スタンプ・絵文字機能（No.30）では、どのようなシステムが採用されますか？",
+    "options": ["プリセットスタンプのみ", "カスタムスタンプシステム", "アニメーションスタンプのみ", "静止画絵文字のみ"],
+    "answer": "カスタムスタンプシステム",
+    "explanation": "No.30「スタンプ・絵文字」の説明は「カスタムスタンプシステム」です。"
+  },
+  {
+    "id": 176,
+    "type": "multiple-choice",
+    "question": "ビデオ通話の背景を変更する「バーチャル背景」機能（No.47）の参考元は何ですか？",
+    "options": ["Google Meet", "Slack", "LINE", "Zoom"],
+    "answer": "Zoom",
+    "explanation": "No.47「バーチャル背景」の参考元はZoomです。"
+  },
+  {
+    "id": 177,
+    "type": "multiple-choice",
+    "question": "AIがキーワードを抽出する機能（No.78）の難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "簡単",
+    "explanation": "No.78「キーワード抽出」の難易度は「簡単」です。"
+  },
+  {
+    "id": 178,
+    "type": "multiple-choice",
+    "question": "カレンダーを統合してスケジュール管理を行う機能（No.83）の難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "中級",
+    "explanation": "No.83「カレンダー統合」の難易度は「中級」です。"
+  },
+  {
+    "id": 179,
+    "type": "multiple-choice",
+    "question": "遺伝子情報によるアクセス管理を行う「DNAパスワード」で利用される技術は何ですか？",
+    "options": ["生体認証", "ゲノム技術", "暗号学", "DID"],
+    "answer": "ゲノム技術",
+    "explanation": "No.95「DNAパスワード」の技術は「ゲノム技術」です。"
+  },
+  {
+    "id": 180,
+    "type": "multiple-choice",
+    "question": "3D位置情報付き音声伝送を行う「空間音響」で利用される技術は何ですか？",
+    "options": ["ハプティック", "空間オーディオ", "IoTセンサー", "Motion Capture"],
+    "answer": "空間オーディオ",
+    "explanation": "No.104「空間音響」の技術は「空間オーディオ」です。"
+  },
+  {
+    "id": 181,
+    "type": "multiple-choice",
+    "question": "使用パターンから自動で最適化を行う「リアルタイム学習」で利用される技術は何ですか？",
+    "options": ["Personal AI", "Online Learning", "Real-time Translation", "Knowledge Graph"],
+    "answer": "Online Learning",
+    "explanation": "No.114「リアルタイム学習」の技術は「Online Learning」です。"
+  },
+  {
+    "id": 182,
+    "type": "multiple-choice",
+    "question": "ブロックチェーンベースのアイデンティティを利用する「NFTプロフィール」で利用される技術は何ですか？",
+    "options": ["Web3", "Blockchain", "Adaptive UI", "Geo-temporal"],
+    "answer": "Web3",
+    "explanation": "No.121「NFTプロフィール」の技術は「Web3」です。"
+  },
+  {
+    "id": 183,
+    "type": "multiple-choice",
+    "question": "セキュリティ設計のアプリ層で、コードの安全性を確保するために行われる対策はどれですか？",
+    "options": ["証明書ピニング", "エンドツーエンド暗号化", "コード難読化・完全性チェック", "データベース暗号化"],
+    "answer": "コード難読化・完全性チェック",
+    "explanation": "アプリ層のセキュリティ対策として「コード難読化、完全性チェック」が挙げられています。"
+  },
+  {
+    "id": 184,
+    "type": "multiple-choice",
+    "question": "インフラ最適化の一環として、需要に応じてサーバー数を自動調整する仕組みは何ですか？",
+    "options": ["CDN", "ロードバランサー", "オートスケーリング", "データベースレプリケーション"],
+    "answer": "オートスケーリング",
+    "explanation": "インフラ最適化の項目に「オートスケーリング設定」とあります。"
+  },
+  {
+    "id": 185,
+    "type": "multiple-choice",
+    "question": "Phase 2で導入される「技術革新」に含まれないものはどれですか？",
+    "options": ["AI統合", "ゲームエンジン", "生産性ツール", "メタバース対応"],
+    "answer": "メタバース対応",
+    "explanation": "Phase 2の技術革新はAI統合、ゲームエンジン、生産性ツールです。メタバース対応はPhase 3の未来技術です。"
+  },
+  {
+    "id": 186,
+    "type": "multiple-choice",
+    "question": "ベータ版リリース（2026年9月）で実装される機能の総数はいくつですか？",
+    "options": ["15機能", "50機能", "80機能", "100機能"],
+    "answer": "50機能",
+    "explanation": "リリース戦略の表で、ベータ版の対象機能は「50機能 (1-50)」とされています。"
+  },
+  {
+    "id": 187,
+    "type": "multiple-choice",
+    "question": "AREが「完全無料」を実現するための戦略として、最も重要なものは何ですか？",
+    "options": ["広告収入", "オープンソース開発者の協力", "既存APIの無料枠活用", "有料プランへの誘導"],
+    "answer": "既存APIの無料枠活用",
+    "explanation": "AWS、Grok APIなどの無料枠を活用することが、完全無料での開発を実現するための戦略の中心です。"
+  },
+  {
+    "id": 188,
+    "type": "multiple-choice",
+    "question": "次世代ユーザーとして想定されているのは、どのような技術の利用者ですか？",
+    "options": ["SNS・チャット利用者", "Eメール利用者", "VR/AR・メタバース利用者", "フィーチャーフォン利用者"],
+    "answer": "VR/AR・メタバース利用者",
+    "explanation": "ターゲットユーザーに「次世代ユーザー：VR/AR・メタバース利用者」と明記されています。"
+  },
+  {
+    "id": 189,
+    "type": "multiple-choice",
+    "question": "競合との差別化として挙げられている「統合性」のメリットは何ですか？",
+    "options": ["高いセキュリティ", "複数アプリの使い分けが不要になる", "無料で利用できる", "最先端の技術が使える"],
+    "answer": "複数アプリの使い分けが不要になる",
+    "explanation": "統合性の差別化として「複数アプリの使い分け不要」が挙げられています。"
+  },
+  {
+    "id": 190,
+    "type": "multiple-choice",
+    "question": "プロジェクトのコンセプトは「超絶モダンな最先端チャットアプリ」ですが、これに最も寄与する機能群はどれですか？",
+    "options": ["基本チャット機能 (1-15)", "ゲーム機能 (51-70)", "ビジネス機能 (81-92)", "次世代機能 (93-124)"],
+    "answer": "次世代機能 (93-124)",
+    "explanation": "量子暗号、メタバース、脳波インターフェースなどを含む次世代機能群が、コンセプトを最も体現しています。"
+  },
+  {
+    "id": 191,
+    "type": "multiple-choice",
+    "question": "TikTokから統合する機能として挙げられていないものはどれですか？",
+    "options": ["ショート動画", "エフェクト", "音楽同期", "ライブ配信"],
+    "answer": "ライブ配信",
+    "explanation": "TikTokからはショート動画、エフェクト、音楽同期が挙げられています。ライブ配信機能の参考元はInstagramです。"
+  },
+  {
+    "id": 192,
+    "type": "multiple-choice",
+    "question": "「1対1チャット」（No.2）機能の難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "簡単",
+    "explanation": "No.2「1対1チャット」の難易度は「簡単」です。"
+  },
+  {
+    "id": 193,
+    "type": "multiple-choice",
+    "question": "SNS型の関係性を実現する「フォロー・フォロワー」機能（No.25）の参考元は何ですか？",
+    "options": ["Facebook", "Twitter", "Instagram", "LINE"],
+    "answer": "Instagram",
+    "explanation": "No.25「フォロー・フォロワー」の参考元はInstagramです。"
+  },
+  {
+    "id": 194,
+    "type": "multiple-choice",
+    "question": "24時間限定で投稿が閲覧できる「ストーリー機能」（No.33）の難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "中級",
+    "explanation": "No.33「ストーリー機能」の難易度は「中級」です。"
+  },
+  {
+    "id": 195,
+    "type": "multiple-choice",
+    "question": "通話中にテキストメッセージを送信する「通話中チャット」機能（No.49）の難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "簡単",
+    "explanation": "No.49「通話中チャット」の難易度は「簡単」です。"
+  },
+  {
+    "id": 196,
+    "type": "multiple-choice",
+    "question": "AIチャットボットとの対話機能（No.71）の難易度はどれですか？",
+    "options": ["簡単", "中級", "上級", "独自"],
+    "answer": "中級",
+    "explanation": "No.71「AIチャットボット」の難易度は「中級」です。"
+  },
+  {
+    "id": 197,
+    "type": "multiple-choice",
+    "question": "AIが脆弱性を自動で修正する「自己修復セキュリティ」で利用される技術は何ですか？",
+    "options": ["量子暗号", "AI セキュリティ", "準同型暗号", "ブロックチェーン"],
+    "answer": "AI セキュリティ",
+    "explanation": "No.97「自己修復セキュリティ」の技術は「AI セキュリティ」です。"
+  },
+  {
+    "id": 198,
+    "type": "multiple-choice",
+    "question": "思考によるメッセージ入力を可能にする「脳波インターフェース」で利用される技術は何ですか？",
+    "options": ["BCI", "Emotion AI", "Neural Network", "NLP"],
+    "answer": "BCI",
+    "explanation": "No.109「脳波インターフェース」の技術は「BCI（ブレイン・コンピュータ・インターフェース）」です。"
+  },
+  {
+    "id": 199,
+    "type": "multiple-choice",
+    "question": "家電の制御や自動化を行う「スマートホーム統合」で利用される技術は何ですか？",
+    "options": ["Health API", "IoT Sensors", "Home Automation", "Environment API"],
+    "answer": "Home Automation",
+    "explanation": "No.119「スマートホーム統合」の技術は「Home Automation」です。"
+  },
+  {
+    "id": 200,
+    "type": "multiple-choice",
+    "question": "バックエンドのインフラにおいて、アクセスの集中を分散させるために利用されるものは何ですか？",
+    "options": ["CDN", "ロードバランサー", "オートスケーリング", "データベースレプリケーション"],
+    "answer": "ロードバランサー",
+    "explanation": "インフラ最適化の項目に「ロードバランサー設定」とあり、これがアクセス分散の役割を担います。"
+  }
+]

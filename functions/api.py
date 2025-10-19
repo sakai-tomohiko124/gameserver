@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, make_response
 import uuid
 import threading
 from flask_socketio import SocketIO, join_room as sio_join_room, leave_room as sio_leave_room
@@ -1022,6 +1022,18 @@ def on_baba_draw(data):
         _check_for_winner(room_id)
     except Exception:
         pass
+
+
+@app.after_request
+def add_csp_headers(response):
+    csp_policy = {
+        "default-src": "'self'",
+        "style-src": "'self' 'unsafe-inline' https://www.gstatic.com",
+        "script-src": "'self' https://translate.googleapis.com",
+    }
+    csp_header = "; ".join(f"{key} {value}" for key, value in csp_policy.items())
+    response.headers["Content-Security-Policy"] = csp_header
+    return response
 
 
 if __name__ == '__main__':

@@ -269,4 +269,102 @@ input[type="text"] {
 @media (min-width: 1025px) {
     /* パソコン向け（デフォルト） */
     /* 現在のスタイルを維持 */
+    #game-screen {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    #game-canvas {
+        width: 70%;
+        height: 100%;
+    }
+    #status-window {
+        width: 28%;
+        height: 100%;
+        border: 2px solid #7f8c8d;
+        padding: 10px;
+        box-sizing: border-box;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+    #command-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    #command-list li {
+        padding: 5px;
+        cursor: pointer;
+        border: 1px solid #7f8c8d;
+        margin-bottom: 5px;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    #command-list li.selected {
+        background-color: yellow;
+        color: black;
+    }
+    #battle-screen {
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 10px;
+    }
+    #battle-party-status-top {
+        width: 100%;
+        height: 15%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border: 2px solid #7f8c8d;
+        background-color: rgba(0, 0, 0, 0.8);
+        padding: 0 1em;
+        box-sizing: border-box;
+    }
+    #battle-monster-area {
+        width: 100%;
+        height: 55%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #battle-bottom-container {
+        width: 100%;
+        height: 25%;
+        position: relative;
+    }
+    #battle-message-window {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        visibility: hidden;
+        background-color: rgba(0, 0, 0, 0.8);
+        border: 2px solid #7f8c8d;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+    #battle-command-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        gap: 10px;
+    }
+    #battle-command-window {
+        width: 60%;
+        height: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    #battle-enemy-info {
+        width: 40%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.2em;
+        background-color: rgba(0, 0, 0, 0.8);
+        border: 2px solid #7f8c8d;
+        padding: 10px;
+        box-sizing: border-box;
+    }
 }

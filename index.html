@@ -24,6 +24,16 @@
             width: 100vw;
             height: 100vh;
             object-fit: contain;
+            animation: floatUp 4s ease-out forwards;
+            transform: translateY(100vh); /* 初期位置を下に */
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh);
+            }
+            100% {
+                transform: translateY(0);
+            }
         }
     </style>
 </head>

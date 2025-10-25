@@ -61,44 +61,48 @@
     <script src="js/main.js"></script>
 
     <script>
-        // screens 定義
-        const screens = {
-            battle: document.getElementById('battle-screen'),
-        };
+        document.addEventListener('DOMContentLoaded', () => {
+            // screens 定義
+            const screens = {
+                battle: document.getElementById('battle-screen'),
+            };
 
-        // 状態復元
-        const savedGameState = localStorage.getItem('gameState');
-        if (savedGameState) {
-            gameState = JSON.parse(savedGameState);
-            updatePartyStatusTopUI();
-        }
-        const savedEnemy = localStorage.getItem('currentEnemy');
-        if (savedEnemy) {
-            currentEnemy = JSON.parse(savedEnemy);
-            document.getElementById('battle-monster-area').innerHTML = `<img src="${currentEnemy.image}" alt="${currentEnemy.name}">`;
-            updateEnemyInfoUI();
-        }
-        const savedIsInBattle = localStorage.getItem('isInBattle');
-        if (savedIsInBattle === 'true') {
-            isInBattle = true;
-            const savedIsPlayerTurn = localStorage.getItem('isPlayerTurn');
-            isPlayerTurn = savedIsPlayerTurn === 'true';
-            const savedCommandIndex = localStorage.getItem('currentCommandIndex');
-            currentCommandIndex = parseInt(savedCommandIndex) || 0;
-            updateCommandUI();
-            if (!isPlayerTurn) {
-                showBattleMessage('敵のターン...');
-            } else {
-                showCommandWindow();
+            // 状態復元
+            const savedGameState = localStorage.getItem('gameState');
+            if (savedGameState) {
+                gameState = JSON.parse(savedGameState);
+                updatePartyStatusTopUI();
             }
-        }
-        // BGM再生
-        playBgm('battle');
+            const savedEnemy = localStorage.getItem('currentEnemy');
+            if (savedEnemy) {
+                currentEnemy = JSON.parse(savedEnemy);
+                document.getElementById('battle-monster-area').innerHTML = `<img src="${currentEnemy.image}" alt="${currentEnemy.name}">`;
+                updateEnemyInfoUI();
+            }
+            const savedIsInBattle = localStorage.getItem('isInBattle');
+            if (savedIsInBattle === 'true') {
+                isInBattle = true;
+                const savedIsPlayerTurn = localStorage.getItem('isPlayerTurn');
+                isPlayerTurn = savedIsPlayerTurn === 'true';
+                const savedCommandIndex = localStorage.getItem('currentCommandIndex');
+                currentCommandIndex = parseInt(savedCommandIndex) || 0;
+                updateCommandUI();
+                if (!isPlayerTurn) {
+                    showBattleMessage('敵のターン...');
+                } else {
+                    showCommandWindow();
+                }
+            }
+            // BGM停止してから再生 (ランダムにbattle1またはbattle2)
+            const bgm = document.getElementById('bgm');
+            if (bgm) bgm.pause();
+            const battleBgm = Math.random() < 0.5 ? 'battle1' : 'battle2';
+            playBgm(battleBgm);
+        });
     </script>
 
     <!-- BGM -->
-    <audio id="bgm-battle1" src="bgm/battle1.mp3" loop></audio>
-    <audio id="bgm-battle2" src="bgm/battle2.mp3" loop></audio>
+    <audio id="bgm" loop></audio>
 
 </body>
 </html>

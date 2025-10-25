@@ -32,42 +32,62 @@
                 <button id="manage-saves-button">クレジット</button>
                 <div id="autosave-indicator" style="color: yellow; font-weight: bold;">自動保存中...</div>
             </div>
+            <ul id="command-list" class="hidden">
+                <li id="attack-command">こうげき</li>
+                <li id="spell-command">じゅもん</li>
+                <li id="defend-command">ぼうぎょ</li>
+                <li id="item-command">どうぐ</li>
+                <li id="escape-command">にげる</li>
+                <li id="move-command">うごく</li>
+            </ul>
         </div>
     </div>
 
     <script src="js/main.js"></script>
 
     <script>
-        // screens 定義
-        const screens = {
-            main: document.getElementById('main-game-screen'),
-        };
+        document.addEventListener('DOMContentLoaded', () => {
+            // screens 定義
+            const screens = {
+                main: document.getElementById('main-game-screen'),
+            };
 
-        // 状態復元
-        const savedGameState = localStorage.getItem('gameState');
-        if (savedGameState) {
-            gameState = JSON.parse(savedGameState);
-            updateStatusWindow();
-        }
-        const savedMapName = localStorage.getItem('currentMapName') || 'field';
-        loadMapData(savedMapName).then(() => {
-            const savedPlayer = localStorage.getItem('player');
-            if (savedPlayer) {
-                player = JSON.parse(savedPlayer);
+            // 初期化関数
+            async function initialize() {
+                // 状態復元
+                const savedGameState = localStorage.getItem('gameState');
+                if (savedGameState) {
+                    gameState = JSON.parse(savedGameState);
+                    updateStatusWindow();
+                }
+                const savedMapName = localStorage.getItem('currentMapName') || 'field';
+                await loadMapData(savedMapName);
+                const savedPlayer = localStorage.getItem('player');
+                if (savedPlayer) {
+                    player = JSON.parse(savedPlayer);
+                }
+                // ゲームループ開始
+                gameLoop();
+                // BGM再生 (少し遅らせる)
+                setTimeout(() => playBgm(savedMapName), 100);
+                // コマンドリスト表示
+                showCommandList();
             }
-            // ゲームループ開始
-            gameLoop();
-        });
 
-        // ボタンイベント
-        document.getElementById('manage-saves-button').addEventListener('click', () => {
-            localStorage.setItem('pendingScreen', 'saveSlot');
-            localStorage.setItem('saveSlotMode', 'delete');
-            window.location.href = 'index4.html';
+            // 初期化実行
+            initialize();
+
+            // ボタンイベント
+            document.getElementById('manage-saves-button').addEventListener('click', () => {
+                localStorage.setItem('pendingScreen', 'saveSlot');
+                localStorage.setItem('saveSlotMode', 'delete');
+                window.location.href = 'index4.html';
+            });
         });
     </script>
 
     <!-- BGM -->
+    <audio id="bgm" loop></audio>
     <audio id="bgm-field" src="bgm/field.mp3" loop></audio>
     <audio id="bgm-town" src="bgm/DQB2街の賑わい「からっぽ島」.mp3" loop></audio>
     <audio id="bgm-dungeon" src="bgm/DQB1・２ 恐怖の地下洞「１メルキド」「２洞窟など」DQB2魔の塔「ムーンブルク島大灯台」.mp3" loop></audio>

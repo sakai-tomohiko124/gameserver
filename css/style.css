@@ -107,57 +107,97 @@ input[type="text"] {
 #battle-screen {
     flex-direction: column;
     justify-content: space-between;
+    padding: 10px; /* 全体に少し余白を */
 }
 
-#battle-log-window {
-    width: 100%;
-    height: 20%;
+/* 汎用ウィンドウスタイル */
+.window-box {
     border: 2px solid #7f8c8d;
+    background-color: rgba(0, 0, 0, 0.8);
     padding: 1em;
     box-sizing: border-box;
 }
 
+/* 上部: パーティーステータス */
+#battle-party-status-top {
+    width: 100%;
+    height: 15%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border: 2px solid #7f8c8d;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 0 1em;
+    box-sizing: border-box;
+}
+
+.party-member-status {
+    text-align: left;
+}
+
+/* 中央: モンスター表示エリア */
 #battle-monster-area {
     width: 100%;
-    height: 50%;
+    height: 55%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #battle-monster-area img {
-    max-width: 150px; /* モンスター画像の最大サイズ */
+    max-width: 180px; /* 少し大きく */
+    max-height: 100%;
 }
 
-#battle-command-window {
+/* 下部: 全体コンテナ */
+#battle-bottom-container {
     width: 100%;
     height: 25%;
-    border: 2px solid #7f8c8d;
-    padding: 1em;
-    box-sizing: border-box;
-    display: flex; /* flexboxレイアウトに変更 */
-    justify-content: space-between;
-    align-items: center;
+    position: relative; /* メッセージとコマンドを重ねるため */
 }
 
-#battle-party-status {
-    width: 50%;
+/* 下部: メッセージウィンドウ */
+#battle-message-window {
+    width: 100%;
     height: 100%;
-    padding-right: 1em;
-    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* デフォルトでは非表示にしておく */
+    visibility: hidden;
 }
 
-#battle-party-status ul {
-    list-style: none;
-    padding: 0;
+#battle-message {
     margin: 0;
 }
 
+/* 下部: コマンド＋敵情報コンテナ */
+#battle-command-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    gap: 10px;
+}
+
+#battle-command-window {
+    width: 60%;
+    height: 100%;
+}
+
 .command-grid {
-    width: 50%; /* 幅を調整 */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
+    height: 100%;
+}
+
+#battle-enemy-info {
+    width: 40%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
 }
 
 /* セーブ/ロード選択画面のスタイル */
@@ -183,4 +223,50 @@ input[type="text"] {
 
 .save-slot.empty {
     color: #95a5a6; /* 空のスロットは文字を薄く */
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    /* スマホ向け */
+    #game-container {
+        width: 95vw;
+        height: 90vh;
+        padding: 5px;
+    }
+    .menu-window {
+        width: 90%;
+        padding: 1em;
+    }
+    #loading-screen h1 {
+        font-size: 2em;
+    }
+    input[type="text"], button {
+        font-size: 0.9em;
+        padding: 8px 16px;
+    }
+    #battle-monster-area img {
+        max-width: 100px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    /* タブレット向け */
+    #game-container {
+        width: 90vw;
+        height: 80vh;
+    }
+    .menu-window {
+        width: 70%;
+    }
+    #loading-screen h1 {
+        font-size: 2.5em;
+    }
+    #battle-monster-area img {
+        max-width: 120px;
+    }
+}
+
+@media (min-width: 1025px) {
+    /* パソコン向け（デフォルト） */
+    /* 現在のスタイルを維持 */
 }

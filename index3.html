@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEROQUEST - 戦闘シーン</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        #command-list li.selected {
+            background-color: yellow;
+            color: black;
+        }
+        #command-list li {
+            padding: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- 戦闘画面 -->
+        <div id="battle-screen" class="screen active">
+            <!-- 上部: パーティーステータスウィンドウ -->
+            <div id="battle-party-status-top">
+                <!-- JavaScriptによってパーティのステータスがここに表示されます -->
+            </div>
+
+            <!-- 中央: モンスター表示エリア -->
+            <div id="battle-monster-area">
+                <!-- ここにモンスター画像が表示される -->
+            </div>
+
+            <!-- 下部: メッセージ＆コマンドウィンドウ -->
+            <div id="battle-bottom-container">
+                <!-- メッセージウィンドウ (普段は非表示) -->
+                <div id="battle-message-window" class="window-box">
+                    <p id="battle-message"></p>
+                </div>
+
+                <!-- コマンドウィンドウ (メッセージ表示中は非表示) -->
+                <div id="battle-command-container">
+                    <div id="battle-command-window" class="window-box">
+                        <ul id="command-list">
+                            <li id="command-attack">こうげき</li>
+                            <li id="command-spell">じゅもん</li>
+                            <li id="command-defend">ぼうぎょ</li>
+                            <li id="command-item">どうぐ</li>
+                            <li id="command-escape">にげる</li>
+                        </ul>
+                    </div>
+                    <div id="battle-enemy-info" class="window-box">
+                        <!-- JavaScriptによって敵情報がここに表示されます -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+
+    <script>
+        // screens 定義
+        const screens = {
+            battle: document.getElementById('battle-screen'),
+        };
+
+        // 状態復元
+        const savedGameState = localStorage.getItem('gameState');
+        if (savedGameState) {
+            gameState = JSON.parse(savedGameState);
+            updatePartyStatusTopUI();
+        }
+        const savedEnemy = localStorage.getItem('currentEnemy');
+        if (savedEnemy) {
+            currentEnemy = JSON.parse(savedEnemy);
+            document.getElementById('battle-monster-area').innerHTML = `<img src="${currentEnemy.image}" alt="${currentEnemy.name}">`;
+            updateEnemyInfoUI();
+        }
+        const savedIsInBattle = localStorage.getItem('isInBattle');
+        if (savedIsInBattle === 'true') {
+            isInBattle = true;
+            const savedIsPlayerTurn = localStorage.getItem('isPlayerTurn');
+            isPlayerTurn = savedIsPlayerTurn === 'true';
+            const savedCommandIndex = localStorage.getItem('currentCommandIndex');
+            currentCommandIndex = parseInt(savedCommandIndex) || 0;
+            updateCommandUI();
+            if (!isPlayerTurn) {
+                showBattleMessage('敵のターン...');
+            } else {
+                showCommandWindow();
+            }
+        }
+        // BGM再生
+        playBgm('battle');
+    </script>
+
+    <!-- BGM -->
+    <audio id="bgm-battle1" src="bgm/battle1.mp3" loop></audio>
+    <audio id="bgm-battle2" src="bgm/battle2.mp3" loop></audio>
+
+</body>
+</html>

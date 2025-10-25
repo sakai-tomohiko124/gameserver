@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEROQUEST - フィールドマップ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        #command-list li.selected {
+            background-color: yellow;
+            color: black;
+        }
+        #command-list li {
+            padding: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- メインゲーム画面 (フィールドマップ) -->
+        <div id="main-game-screen" class="screen active">
+            <div id="map-area">
+                <canvas id="game-canvas"></canvas>
+            </div>
+            <div id="status-window">
+                <!-- ここに4人分のステータスが表示されます -->
+                <p>ステータスウィンドウ</p>
+                <button id="save-button">冒険の書に記録する</button>
+                <button id="exit-without-save-button">終了（セーブしない）</button>
+                <button id="manage-saves-button">冒険の書を管理</button>
+                <div id="autosave-indicator" style="color: yellow; font-weight: bold;">自動保存中...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+
+    <script>
+        // screens 定義
+        const screens = {
+            main: document.getElementById('main-game-screen'),
+        };
+
+        // 状態復元
+        const savedGameState = localStorage.getItem('gameState');
+        if (savedGameState) {
+            gameState = JSON.parse(savedGameState);
+            updateStatusWindow();
+        }
+        const savedMapName = localStorage.getItem('currentMapName') || 'field';
+        loadMapData(savedMapName).then(() => {
+            const savedPlayer = localStorage.getItem('player');
+            if (savedPlayer) {
+                player = JSON.parse(savedPlayer);
+            }
+            // ゲームループ開始
+            gameLoop();
+        });
+    </script>
+
+    <!-- BGM -->
+    <audio id="bgm-field" src="bgm/field.mp3" loop></audio>
+    <audio id="bgm-town" src="bgm/DQB2街の賑わい「からっぽ島」.mp3" loop></audio>
+    <audio id="bgm-dungeon" src="bgm/DQB1・２ 恐怖の地下洞「１メルキド」「２洞窟など」DQB2魔の塔「ムーンブルク島大灯台」.mp3" loop></audio>
+
+</body>
+</html>

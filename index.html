@@ -3,21 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HIKOMONQUEST</title>
+    <title>HEROQUEST</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        #command-list li.selected {
+            background-color: yellow;
+            color: black;
+        }
+        #command-list li {
+            padding: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
     <div id="game-container">
         <!-- ローディング画面 -->
         <div id="loading-screen" class="screen active">
-            <h1>HIKOMONQUEST</h1>
+            <h1>HEROQUEST</h1>
+            <img src="images/loading_image.png" alt="Loading Image" style="max-width: 100%; height: auto;">
         </div>
 
         <!-- スタート画面 -->
         <div id="start-screen" class="screen">
             <div class="menu-window">
-                <h1>HIKOMONQUEST</h1>
+                <h1>HEROQUEST</h1>
                 <button id="start-button">冒険をする</button>
                 <button id="load-button">続きから</button>
                 <button id="resume-button">中断したところから始める</button>
@@ -40,7 +51,7 @@
             <div class="menu-window">
                 <h2>設定</h2>
                 <label for="player-name">主人公の名前:</label>
-                <input type="text" id="player-name" value="ゆうしゃ" maxlength="8">
+                <input type="text" id="player-name" value="ヒーロー" maxlength="8">
                 <br>
                 <label for="bgm-volume">BGM音量:</label>
                 <input type="range" id="bgm-volume" min="0" max="1" step="0.1" value="0.3">
@@ -63,26 +74,58 @@
         
         <!-- 戦闘画面 -->
         <div id="battle-screen" class="screen">
-            <div id="battle-log-window">
-                <p id="battle-message">モンスターがあらわれた！</p>
+            <!-- 上部: パーティーステータスウィンドウ -->
+            <div id="battle-party-status-top">
+                <!-- JavaScriptによってパーティのステータスがここに表示されます -->
             </div>
+
+            <!-- 中央: モンスター表示エリア -->
             <div id="battle-monster-area">
                 <!-- ここにモンスター画像が表示される -->
             </div>
-            <div id="battle-command-window">
-                <div id="battle-party-status">
-                    <!-- JavaScriptによってパーティのステータスがここに表示されます -->
+
+            <!-- 下部: メッセージ＆コマンドウィンドウ -->
+            <div id="battle-bottom-container">
+                <!-- メッセージウィンドウ (普段は非表示) -->
+                <div id="battle-message-window" class="window-box">
+                    <p id="battle-message"></p>
                 </div>
-                <div class="command-grid">
-                    <button id="attack-command">こうげき</button>
-                    <button>じゅもん</button>
-                    <button>ぼうぎょ</button>
-                    <button id="escape-button">にげる</button>
+
+                <!-- コマンドウィンドウ (メッセージ表示中は非表示) -->
+                <div id="battle-command-container">
+                    <div id="battle-command-window" class="window-box">
+                        <ul id="command-list">
+                            <li id="command-attack">こうげき</li>
+                            <li id="command-spell">じゅもん</li>
+                            <li id="command-defend">ぼうぎょ</li>
+                            <li id="command-item">どうぐ</li>
+                            <li id="command-escape">にげる</li>
+                        </ul>
+                    </div>
+                    <div id="battle-enemy-info" class="window-box">
+                        <!-- JavaScriptによって敵情報がここに表示されます -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="js/main.js"></script>
+
+    <script>
+        // screens 定義
+        const screens = {
+            loading: document.getElementById('loading-screen'),
+        };
+    </script>
+
+    <!-- BGM -->
+    <audio id="bgm-field" src="bgm/field.mp3" loop></audio>
+    <audio id="bgm-town" src="bgm/DQB2街の賑わい「からっぽ島」.mp3" loop></audio>
+    <audio id="bgm-dungeon" src="bgm/DQB1・２ 恐怖の地下洞「１メルキド」「２洞窟など」DQB2魔の塔「ムーンブルク島大灯台」.mp3" loop></audio>
+    <audio id="bgm-battle1" src="bgm/battle1.mp3" loop></audio>
+    <audio id="bgm-battle2" src="bgm/battle2.mp3" loop></audio>
+    <audio id="bgm-title" src="bgm/DQB2序曲.mp3" loop></audio>
+
 </body>
 </html>

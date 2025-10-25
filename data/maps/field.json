@@ -2,9 +2,17 @@
     "tileWidth": 32,
     "tileHeight": 32,
     "tiles": [
-        { "type": "grass", "sourceX": 0, "walkable": true, "encounter": true },
-        { "type": "forest", "sourceX": 1, "walkable": true, "encounter": true },
-        { "type": "water", "sourceX": 2, "walkable": false, "encounter": false }
+        { "type": "rock", "image": "images/tileset/rock.png", "walkable": false, "encounter": false },
+        { "type": "mountain", "image": "images/tileset/mountain.png", "walkable": false, "encounter": false },
+        { "type": "forest", "image": "images/tileset/tree.png", "walkable": true, "encounter": true },
+        { "type": "town", "image": "images/tileset/town.png", "walkable": true, "encounter": false }
+    ],
+    "warps": [
+        { "x": 12, "y": 7, "to": "town", "destX": 12, "destY": 7 },
+        { "x": 5, "y": 5, "to": "dungeon1", "destX": 5, "destY": 5 }
+    ],
+    "objects": [
+        { "type": "image", "x": 10, "y": 10, "image": "images/special_object.png" }
     ],
     "layout": [
         [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -16,9 +24,9 @@
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]

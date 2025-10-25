@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEROQUEST - データ管理</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- ローディング画面 -->
+        <div id="loading-screen" class="screen active">
+            <h1>HEROQUEST</h1>
+            <img src="images/loading_image.png" alt="Loading Image" style="max-width: 100%; height: auto;">
+        </div>
+
+        <!-- スタート画面 -->
+        <div id="start-screen" class="screen">
+            <div class="menu-window">
+                <h1>HEROQUEST</h1>
+                <button id="start-button">冒険をする</button>
+                <button id="load-button">続きから</button>
+                <button id="resume-button">中断したところから始める</button>
+            </div>
+        </div>
+
+        <!-- セーブ/ロード選択画面 -->
+        <div id="save-slot-screen" class="screen">
+            <div class="menu-window">
+                <h2 id="save-slot-title">冒険の書をえらんでください</h2>
+                <div id="save-slots-container">
+                    <!-- JavaScriptによってセーブスロットがここに表示されます -->
+                </div>
+                <button id="back-to-start-button">もどる</button>
+            </div>
+        </div>
+
+        <!-- 名前・BGM設定画面 -->
+        <div id="config-screen" class="screen">
+            <div class="menu-window">
+                <h2>設定</h2>
+                <label for="player-name">主人公の名前:</label>
+                <input type="text" id="player-name" value="ヒーロー" maxlength="8">
+                <br>
+                <label for="bgm-volume">BGM音量:</label>
+                <input type="range" id="bgm-volume" min="0" max="1" step="0.1" value="0.3">
+                <br>
+                <button id="config-complete-button">けってい</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+
+    <script>
+        // screens 定義
+        const screens = {
+            loading: document.getElementById('loading-screen'),
+            start: document.getElementById('start-screen'),
+            saveSlot: document.getElementById('save-slot-screen'),
+            config: document.getElementById('config-screen'),
+        };
+
+        // 状態復元
+        const savedGameState = localStorage.getItem('gameState');
+        if (savedGameState) {
+            gameState = JSON.parse(savedGameState);
+        }
+        // スタート画面を表示
+        switchScreen('start');
+    </script>
+
+    <!-- BGM -->
+    <audio id="bgm-title" src="bgm/DQB2序曲.mp3" loop></audio>
+
+</body>
+</html>

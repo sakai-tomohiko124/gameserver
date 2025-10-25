@@ -29,7 +29,7 @@
                 <p>ステータスウィンドウ</p>
                 <button id="save-button">冒険の書に記録する</button>
                 <button id="exit-without-save-button">終了（セーブしない）</button>
-                <button id="manage-saves-button">冒険の書を管理</button>
+                <button id="manage-saves-button">クレジット</button>
                 <div id="autosave-indicator" style="color: yellow; font-weight: bold;">自動保存中...</div>
             </div>
         </div>
@@ -57,6 +57,13 @@
             }
             // ゲームループ開始
             gameLoop();
+        });
+
+        // ボタンイベント
+        document.getElementById('manage-saves-button').addEventListener('click', () => {
+            localStorage.setItem('pendingScreen', 'saveSlot');
+            localStorage.setItem('saveSlotMode', 'delete');
+            window.location.href = 'index4.html';
         });
     </script>
 

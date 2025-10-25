@@ -26,7 +26,8 @@
                 <button id="start-button">冒険をする</button>
                 <button id="load-button">続きから</button>
                 <button id="resume-button">中断したところから始める</button>
-                <button id="manage-saves-button">冒険の書を管理</button>
+                <button id="delete-save-button">冒険の書を消す</button>
+                <button id="manage-saves-button">クレジット</button>
                 <button id="bulk-command-button">一括コマンド</button>
             </div>
         </div>
@@ -69,6 +70,15 @@
 
         // スタート画面を表示
         switchScreen('start');
+
+        // pending screen チェック
+        const pending = localStorage.getItem('pendingScreen');
+        if (pending === 'saveSlot') {
+            const mode = localStorage.getItem('saveSlotMode') || 'load';
+            showSaveSlotScreen(mode);
+            localStorage.removeItem('pendingScreen');
+            localStorage.removeItem('saveSlotMode');
+        }
 
         // ボタンイベント
         document.getElementById('manage-saves-button').addEventListener('click', () => {

@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         backToStart: document.getElementById('back-to-start-button'),
         configComplete: document.getElementById('config-complete-button'),
         save: document.getElementById('save-button'),
+        deleteSave: document.getElementById('delete-save-button'),
     };
 
     const attackButton = document.getElementById('attack-command');
@@ -874,6 +875,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (buttons.load) buttons.load.addEventListener('click', () => showSaveSlotScreen('load'));
     if (buttons.resume) buttons.resume.addEventListener('click', () => showSaveSlotScreen('load'));
     if (buttons.backToStart) buttons.backToStart.addEventListener('click', () => switchScreen('start'));
+    if (buttons.deleteSave) buttons.deleteSave.addEventListener('click', () => showSaveSlotScreen('delete'));
 
     if (buttons.configComplete) buttons.configComplete.addEventListener('click', () => {
         const playerName = playerNameInput.value;
@@ -909,33 +911,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- 初期化処理 ---
-    playBgm('title'); // 読み込み画面でBGM再生
-    setTimeout(() => {
-        window.location.href = 'index4.html'; // スタート画面へ遷移
-    }, 3000);
+    if (document.getElementById('start-button')) {
+        playBgm('title'); // 読み込み画面でBGM再生
 
-    loadMonsterData();
-    // 自動保存間隔開始
-    startAutoSaveInterval();
+        loadMonsterData();
+        // 自動保存間隔開始
+        startAutoSaveInterval();
 
-    // ページ離脱やタブ非表示のタイミングで自動保存（ただしセーブせず終了を選んだ場合は無効）
-    window.addEventListener('beforeunload', (e) => {
-        if (enableAutosave) autoSave();
-    });
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden && enableAutosave) autoSave();
-    });
+        // ページ離脱やタブ非表示のタイミングで自動保存（ただしセーブせず終了を選んだ場合は無効）
+        window.addEventListener('beforeunload', (e) => {
+            if (enableAutosave) autoSave();
+        });
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && enableAutosave) autoSave();
+        });
 
-    // 起動時に自動保存があれば復元するか確認
-    const autosaveJSON = localStorage.getItem('autosave');
-    if (autosaveJSON) {
-        if (confirm('自動保存のデータが見つかりました。前回の途中から再開しますか？')) {
-            try {
-                const saved = JSON.parse(autosaveJSON);
-                currentSaveSlot = -1;
-                initializeGame(saved);
-                startAutoSaveInterval();
-            } catch (e) { console.error('自動保存の復元に失敗しました:', e); }
+        // 起動時に自動保存があれば復元するか確認
+        const autosaveJSON = localStorage.getItem('autosave');
+        if (autosaveJSON) {
+            if (confirm('自動保存のデータが見つかりました。前回の途中から再開しますか？')) {
+                try {
+                    const saved = JSON.parse(autosaveJSON);
+                    currentSaveSlot = -1;
+                    initializeGame(saved);
+                    startAutoSaveInterval();
+                } catch (e) { console.error('自動保存の復元に失敗しました:', e); }
+            }
         }
     }
 

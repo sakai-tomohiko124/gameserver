@@ -1,0 +1,186 @@
+body {
+    background: radial-gradient(ellipse at center, #2c3e50 0%, #000000 70%);
+    color: #ecf0f1; /* 少し柔らかい白に */
+    font-family: "MS Gothic", sans-serif; /* ゲームらしいフォントを指定 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#game-container {
+    width: 800px;
+    height: 600px;
+    border: 2px solid #7f8c8d; /* 境界線を少し落ち着いた色に */
+    background-color: rgba(0, 0, 0, 0.5); /* 半透明の黒背景を追加 */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); /* 外側に影を追加 */
+    position: relative;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* 各画面の基本スタイル */
+.screen {
+    display: none; /* 基本的に非表示にする */
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.screen.active {
+    display: flex; /* activeクラスがついた画面だけ表示 */
+}
+
+#loading-screen h1 {
+    font-size: 3em;
+    letter-spacing: 0.1em;
+    border: none;
+    animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ウィンドウスタイル */
+.menu-window {
+    border: 2px solid #7f8c8d;
+    padding: 2em;
+    background-color: #000;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* ボタン同士の間隔 */
+    width: 60%; /* ウィンドウの幅を調整 */
+}
+
+input[type="text"], button {
+    background-color: #000;
+    color: #fff;
+    border: 2px solid #7f8c8d;
+    padding: 10px 20px;
+    font-family: inherit;
+    font-size: 1em;
+    cursor: pointer;
+    margin: 5px 0; /* 上下のマージンを調整 */
+    width: 100%; /* ボタンの幅をウィンドウに合わせる */
+    box-sizing: border-box; /* paddingを含めて幅を計算 */
+}
+
+input[type="text"] {
+    text-align: center;
+}
+
+/* メインゲーム画面のレイアウト */
+#main-game-screen {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#map-area {
+    width: 70%;
+    height: 100%;
+    border: 2px solid #7f8c8d;
+    padding: 0;
+}
+
+#game-canvas {
+    background-color: #333; /* 背景色を仮設定 */
+    display: block; /* 不要な余白を防ぐ */
+    width: 100%;
+    height: 100%;
+}
+
+#status-window {
+    width: 28%;
+    height: 100%;
+    border: 2px solid #7f8c8d;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* 戦闘画面のスタイル */
+#battle-screen {
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#battle-log-window {
+    width: 100%;
+    height: 20%;
+    border: 2px solid #7f8c8d;
+    padding: 1em;
+    box-sizing: border-box;
+}
+
+#battle-monster-area {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#battle-monster-area img {
+    max-width: 150px; /* モンスター画像の最大サイズ */
+}
+
+#battle-command-window {
+    width: 100%;
+    height: 25%;
+    border: 2px solid #7f8c8d;
+    padding: 1em;
+    box-sizing: border-box;
+    display: flex; /* flexboxレイアウトに変更 */
+    justify-content: space-between;
+    align-items: center;
+}
+
+#battle-party-status {
+    width: 50%;
+    height: 100%;
+    padding-right: 1em;
+    box-sizing: border-box;
+}
+
+#battle-party-status ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.command-grid {
+    width: 50%; /* 幅を調整 */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* セーブ/ロード選択画面のスタイル */
+#save-slots-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.save-slot {
+    border: 2px solid #7f8c8d;
+    padding: 15px;
+    cursor: pointer;
+    text-align: left;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.save-slot:hover {
+    background-color: rgba(236, 240, 241, 0.1);
+}
+
+.save-slot.empty {
+    color: #95a5a6; /* 空のスロットは文字を薄く */
+}

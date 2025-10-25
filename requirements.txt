@@ -1,8 +1,0 @@
-Flask
-awsgi
-requests
-beautifulsoup4
-flask-socketio
-python-socketio
-psycopg2-binary
-click

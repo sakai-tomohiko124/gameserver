@@ -3,18 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ドラゴンクエスト風ゲーム</title>
+    <title>HIKOMONQUEST</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
     <div id="game-container">
+        <!-- ローディング画面 -->
+        <div id="loading-screen" class="screen active">
+            <h1>HIKOMONQUEST</h1>
+        </div>
+
         <!-- スタート画面 -->
-        <div id="start-screen" class="screen active">
+        <div id="start-screen" class="screen">
             <div class="menu-window">
-                <h1>ドラゴンクエスト風ゲーム</h1>
-                <button id="start-button">冒険をはじめる</button>
-                <button id="load-button">冒険の書をよむ</button>
+                <h1>HIKOMONQUEST</h1>
+                <button id="start-button">冒険をする</button>
+                <button id="load-button">続きから</button>
+                <button id="resume-button">中断したところから始める</button>
+            </div>
+        </div>
+
+        <!-- セーブ/ロード選択画面 -->
+        <div id="save-slot-screen" class="screen">
+            <div class="menu-window">
+                <h2 id="save-slot-title">冒険の書をえらんでください</h2>
+                <div id="save-slots-container">
+                    <!-- JavaScriptによってセーブスロットがここに表示されます -->
+                </div>
+                <button id="back-to-start-button">もどる</button>
             </div>
         </div>
 
@@ -23,11 +40,11 @@
             <div class="menu-window">
                 <h2>設定</h2>
                 <label for="player-name">主人公の名前:</label>
-                <input type="text" id="player-name" value="ゆうしゃ" maxlength="4">
-                <br><br>
+                <input type="text" id="player-name" value="ゆうしゃ" maxlength="8">
+                <br>
                 <label for="bgm-volume">BGM音量:</label>
                 <input type="range" id="bgm-volume" min="0" max="1" step="0.1" value="0.3">
-                <br><br>
+                <br>
                 <button id="config-complete-button">けってい</button>
             </div>
         </div>
@@ -35,12 +52,33 @@
         <!-- メインゲーム画面 -->
         <div id="main-game-screen" class="screen">
             <div id="map-area">
-                <p>ここにマップが表示されます。</p>
+                <canvas id="game-canvas"></canvas>
             </div>
             <div id="status-window">
                 <!-- ここに4人分のステータスが表示されます -->
                 <p>ステータスウィンドウ</p>
                 <button id="save-button">冒険の書に記録する</button>
+            </div>
+        </div>
+        
+        <!-- 戦闘画面 -->
+        <div id="battle-screen" class="screen">
+            <div id="battle-log-window">
+                <p id="battle-message">モンスターがあらわれた！</p>
+            </div>
+            <div id="battle-monster-area">
+                <!-- ここにモンスター画像が表示される -->
+            </div>
+            <div id="battle-command-window">
+                <div id="battle-party-status">
+                    <!-- JavaScriptによってパーティのステータスがここに表示されます -->
+                </div>
+                <div class="command-grid">
+                    <button id="attack-command">こうげき</button>
+                    <button>じゅもん</button>
+                    <button>ぼうぎょ</button>
+                    <button id="escape-button">にげる</button>
+                </div>
             </div>
         </div>
     </div>

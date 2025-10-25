@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "name": "スライム",
+        "hp": 8,
+        "attack": 10,
+        "defense": 5,
+        "exp": 1,
+        "gold": 2,
+        "image": "images/monsters/slime.png"
+    },
+    {
+        "id": 2,
+        "name": "ドラキー",
+        "hp": 12,
+        "attack": 13,
+        "defense": 7,
+        "exp": 2,
+        "gold": 3,
+        "image": "images/monsters/doraky.png"
+    },
+    {
+        "id": 3,
+        "name": "ゴーレム",
+        "hp": 70,
+        "attack": 40,
+        "defense": 30,
+        "exp": 20,
+        "gold": 50,
+        "image": "images/monsters/ゴライム.png"
+    }
+]

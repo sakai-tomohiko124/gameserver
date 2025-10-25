@@ -1,0 +1,209 @@
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: "MS Gothic", sans-serif; /* ゲームらしいフォントを指定 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#game-container {
+    width: 800px;
+    height: 600px;
+    border: 3px solid #fff;
+    position: relative;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* 各画面の基本スタイル */
+.screen {
+    display: none; /* 基本的に非表示にする */
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.screen.active {
+    display: flex; /* activeクラスがついた画面だけ表示 */
+}
+
+/* ウィンドウスタイル */
+.menu-window {
+    border: 3px solid #fff;
+    padding: 2em;
+    background-color: #000;
+    text-align: center;
+}
+
+input[type="text"], button {
+    background-color: #000;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 10px 20px;
+    font-family: inherit;
+    font-size: 1em;
+    cursor: pointer;
+    margin: 5px;
+}
+
+input[type="text"] {
+    text-align: center;
+}
+
+/* メインゲーム画面のレイアウト */
+#main-game-screen {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#map-area {
+    width: 70%;
+    height: 100%;
+    border: 2px solid #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#status-window {
+    width: 28%;
+    height: 100%;
+    border: 2px solid #fff;
+    padding: 10px;
+    box-sizing: border-box;
+}```
+
+#### **`js/main.js`**
+
+画面の切り替え、設定の保存、セーブ・ロード機能の土台となるロジックです。
+
+```javascript
+document.addEventListener('DOMContentLoaded', () => {
+    // --- 要素の取得 ---
+    const screens = {
+        start: document.getElementById('start-screen'),
+        config: document.getElementById('config-screen'),
+        main: document.getElementById('main-game-screen'),
+    };
+
+    const buttons = {
+        start: document.getElementById('start-button'),
+        load: document.getElementById('load-button'),
+        configComplete: document.getElementById('config-complete-button'),
+        save: document.getElementById('save-button'),
+    };
+    
+    const inputs = {
+        playerName: document.getElementById('player-name'),
+        bgmVolume: document.getElementById('bgm-volume'),
+    };
+
+    // --- ゲームの状態管理 ---
+    let gameState = {};
+
+    // --- 関数定義 ---
+
+    // 画面を切り替える関数
+    function switchScreen(screenName) {
+        Object.values(screens).forEach(screen => screen.classList.remove('active'));
+        screens[screenName].classList.add('active');
+    }
+
+    // ゲームの初期化（またはロード）
+    function initializeGame(saveData = null) {
+        if (saveData) {
+            // セーブデータがある場合
+            gameState = saveData;
+        } else {
+            // 新しく始める場合
+            gameState = {
+                playerName: inputs.playerName.value,
+                bgmVolume: inputs.bgmVolume.value,
+                party: [
+                    { name: inputs.playerName.value, level: 1, hp: 20 },
+                    { name: "せんし", level: 1, hp: 25 },
+                    { name: "まほうつかい", level: 1, hp: 15 },
+                    { name: "そうりょ", level: 1, hp: 18 },
+                ],
+                // その他の初期データ
+            };
+        }
+        
+        console.log("ゲームを開始しました:", gameState);
+        updateStatusWindow(); // ステータス表示を更新
+        switchScreen('main'); // メインゲーム画面へ
+    }
+    
+    // ステータスウィンドウを更新する関数
+    function updateStatusWindow() {
+        const statusWindow = document.getElementById('status-window');
+        let html = '<ul>';
+        gameState.party.forEach(member => {
+            html += `<li>${member.name} LV:${member.level} HP:${member.hp}</li>`;
+        });
+        html += '</ul>';
+        statusWindow.innerHTML = html + statusWindow.innerHTML; // ボタンは残す
+    }
+
+    // セーブ機能
+    function saveGame() {
+        if (!gameState.playerName) {
+            alert("まだ冒険が始まっていません。");
+            return;
+        }
+        // localStorageにgameStateオブジェクトをJSON文字列に変換して保存
+        localStorage.setItem('dqGameSaveData', JSON.stringify(gameState));
+        alert("冒険の書に きろくしました！");
+    }
+
+    // ロード機能
+    function loadGame() {
+        const savedDataJSON = localStorage.getItem('dqGameSaveData');
+        if (savedDataJSON) {
+            const savedData = JSON.parse(savedDataJSON);
+            alert(`冒険の書をよみこみました。ようこそ、${savedData.playerName}さん。`);
+            initializeGame(savedData);
+        } else {
+            alert("冒険の書がありません。");
+        }
+    }
+
+    // モンスターデータの読み込み
+    async function loadMonsterData() {
+        try {
+            const response = await fetch('data/monsters.json');
+            if (!response.ok) throw new Error('Network response was not ok');
+            const monsters = await response.json();
+            console.log("モンスターデータを読み込みました:", monsters);
+            // 今後の戦闘処理などで使えるようにデータを保持しておく
+            //例: window.gameMonsters = monsters;
+        } catch (error) {
+            console.error('モンスターデータの読み込みに失敗しました:', error);
+        }
+    }
+
+
+    // --- イベントリスナーの設定 ---
+
+    // 「冒険をはじめる」ボタン
+    buttons.start.addEventListener('click', () => switchScreen('config'));
+
+    // 「けってい」ボタン
+    buttons.configComplete.addEventListener('click', () => initializeGame());
+    
+    // 「冒険の書をよむ」ボタン
+    buttons.load.addEventListener('click', loadGame);
+
+    // 「冒険の書に記録する」ボタン
+    buttons.save.addEventListener('click', saveGame);
+
+
+    // --- 初期化処理 ---
+    switchScreen('start'); // 最初にスタート画面を表示
+    loadMonsterData(); // モンスターデータを非同期で読み込む
+});

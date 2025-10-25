@@ -9,13 +9,22 @@ function switchScreen(screenName) {
     localStorage.setItem('isPlayerTurn', isPlayerTurn);
     localStorage.setItem('currentCommandIndex', currentCommandIndex);
 
-    // ページ遷移
-    if (screenName === 'main') {
-        window.location.href = 'index2.html';
-    } else if (screenName === 'battle') {
-        window.location.href = 'index3.html';
+    if (screens && screens[screenName]) {
+        // 同じページ内の切り替え
+        Object.values(screens).forEach(screen => screen.classList.remove('active'));
+        screens[screenName].classList.add('active');
+        if (screenName === 'start') {
+            playBgm('title');
+        }
     } else {
-        window.location.href = 'index4.html';
+        // ページ遷移
+        if (screenName === 'main') {
+            window.location.href = 'index2.html';
+        } else if (screenName === 'battle') {
+            window.location.href = 'index3.html';
+        } else {
+            window.location.href = 'index4.html';
+        }
     }
 }
 

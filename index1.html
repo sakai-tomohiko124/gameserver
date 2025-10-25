@@ -27,6 +27,7 @@
                 <button id="load-button">続きから</button>
                 <button id="resume-button">中断したところから始める</button>
                 <button id="manage-saves-button">冒険の書を管理</button>
+                <button id="bulk-command-button">一括コマンド</button>
             </div>
         </div>
 
@@ -72,6 +73,13 @@
         // ボタンイベント
         document.getElementById('manage-saves-button').addEventListener('click', () => {
             window.location.href = 'index4.html';
+        });
+        document.getElementById('bulk-command-button').addEventListener('click', () => {
+            // 一括コマンドの処理（例: すべてのセーブデータを削除）
+            if (confirm('すべてのセーブデータを削除しますか？')) {
+                localStorage.clear();
+                alert('すべてのセーブデータを削除しました。');
+            }
         });
     </script>
 

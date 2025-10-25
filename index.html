@@ -3,31 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEROQUEST</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>HEROQUEST- Loading</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .loading {
+            text-align: center;
+        }
+        .loading img {
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+        }
+    </style>
 </head>
 <body>
-
-    <div id="game-container">
-        <!-- ローディング画面 -->
-        <div id="loading-screen" class="screen active">
-            <h1>HEROQUEST</h1>
-            <img src="images/loading_image.png" alt="Loading Image" style="max-width: 100%; height: auto;">
-        </div>
+    <div class="loading">
+        <img src="images/loading_image.png" alt="Loading Image">
     </div>
-
-    <script src="js/main.js"></script>
-
     <script>
-        // ローディング後にスタート画面へ遷移
-        playBgm('title');
-        setTimeout(() => {
+        setTimeout(function() {
             window.location.href = 'index1.html';
-        }, 3000);
+        }, 5000);
     </script>
-
-    <!-- BGM -->
-    <audio id="bgm-title" src="bgm/DQB2序曲.mp3" loop></audio>
-
 </body>
 </html>

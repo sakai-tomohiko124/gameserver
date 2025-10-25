@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isDefending = false; // 防御フラグ
     
     let currentCommandIndex = 0;
-    const commands = ['attack', 'spell', 'defend', 'item', 'escape'];
+    const commands = ['attack', 'spell', 'defend', 'item', 'escape', 'bulk'];
     // 自動保存制御
     let enableAutosave = true; // セーブせず終了を選んだ場合 false にする
     let autosaveIntervalId = null;
@@ -238,6 +238,9 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'escape':
                 escapeBattle();
                 break;
+            case 'bulk':
+                bulkCommand();
+                break;
         }
     }
 
@@ -250,6 +253,28 @@ document.addEventListener('DOMContentLoaded', () => {
         currentEnemy.hp = Math.max(0, currentEnemy.hp - damage);
         playSe('attack'); // 攻撃SE
         showBattleMessage(`${attacker.name} のこうげき！ ${currentEnemy.name} に ${damage} のダメージ！`);
+        
+        setTimeout(() => {
+            if (currentEnemy.hp <= 0) {
+                handleVictory();
+            } else {
+                handleEnemyTurn();
+            }
+        }, 1500);
+    }
+
+    // 一括コマンド関数
+    function bulkCommand() {
+        if (!isPlayerTurn || !currentEnemy) return;
+        isPlayerTurn = false;
+        let totalDamage = 0;
+        gameState.party.forEach(member => {
+            const damage = calculateDamage(member, currentEnemy);
+            totalDamage += damage;
+            currentEnemy.hp = Math.max(0, currentEnemy.hp - damage);
+        });
+        playSe('attack'); // 攻撃SE
+        showBattleMessage(`パーティ全員のこうげき！ ${currentEnemy.name} に ${totalDamage} のダメージ！`);
         
         setTimeout(() => {
             if (currentEnemy.hp <= 0) {
@@ -845,12 +870,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- イベントリスナーの設定 ---
     document.addEventListener('keydown', handleKeyDown);
 
-    buttons.start.addEventListener('click', () => switchScreen('config'));
-    buttons.load.addEventListener('click', () => showSaveSlotScreen('load'));
-    buttons.resume.addEventListener('click', () => showSaveSlotScreen('load'));
-    buttons.backToStart.addEventListener('click', () => switchScreen('start'));
+    if (buttons.start) buttons.start.addEventListener('click', () => switchScreen('config'));
+    if (buttons.load) buttons.load.addEventListener('click', () => showSaveSlotScreen('load'));
+    if (buttons.resume) buttons.resume.addEventListener('click', () => showSaveSlotScreen('load'));
+    if (buttons.backToStart) buttons.backToStart.addEventListener('click', () => switchScreen('start'));
 
-    buttons.configComplete.addEventListener('click', () => {
+    if (buttons.configComplete) buttons.configComplete.addEventListener('click', () => {
         const playerName = playerNameInput.value;
         if (validatePlayerName(playerName)) {
             initializeGame();
@@ -860,7 +885,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    saveSlotsContainer.addEventListener('click', (event) => {
+    if (saveSlotsContainer) saveSlotsContainer.addEventListener('click', (event) => {
         const clickedSlot = event.target.closest('.save-slot');
         if (!clickedSlot) return;
         const slotId = parseInt(clickedSlot.dataset.slotId, 10);
@@ -913,4 +938,17 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (e) { console.error('自動保存の復元に失敗しました:', e); }
         }
     }
+
+    // グローバルに公開する関数
+    window.loadMapData = loadMapData;
+    window.gameLoop = gameLoop;
+    window.updateStatusWindow = updateStatusWindow;
+    window.updatePartyStatusTopUI = updatePartyStatusTopUI;
+    window.updateEnemyInfoUI = updateEnemyInfoUI;
+    window.updateCommandUI = updateCommandUI;
+    window.showBattleMessage = showBattleMessage;
+    window.showCommandWindow = showCommandWindow;
+    window.handleEnemyTurn = handleEnemyTurn;
+    window.executeCommand = executeCommand;
+    window.playBgm = playBgm;
 });

@@ -22,35 +22,35 @@ class Character {
         this.baseAttack = attack;
         this.defense = defense;
         this.imagePath = imagePath;
-        
+
         this.skills = options.skills || [];
         this.spells = options.spells || [];
         this.equipment = options.equipment || null;
         this.weaponName = options.weaponName || null;
-        
+
         this.isDefending = false;
         this.isNioDachi = false;
         this.dazzleTurns = 0;
         this.laughingTurns = 0;
-        
+
         this.recalculateStats();
     }
-    
+
     isAlive() {
         return this.hp > 0;
     }
-    
+
     recalculateStats() {
         const weaponAttack = this.equipment ? this.equipment.attack : 0;
         this.attack = this.baseAttack + weaponAttack;
     }
-    
+
     equip(weaponItem, weaponName) {
         this.equipment = weaponItem;
         this.weaponName = weaponName;
         this.recalculateStats();
     }
-    
+
     unequip() {
         this.equipment = null;
         this.weaponName = null;
@@ -63,22 +63,22 @@ class Game {
     constructor() {
         this.canvas = document.getElementById('battle-canvas');
         this.ctx = this.canvas.getContext('2d');
-        
+
         this.gameState = GameState.MESSAGE;
         this.selectedCommandIndex = 0;
         this.selectedSubmenuIndex = 0;
         this.selectedTargetIndex = 0;
-        
+
         this.currentAttacker = null;
         this.nioDachiCharacter = null;
         this.activeItem = null;
         this.lastCommand = null;
-        
+
         this.currentTurnIndex = 0;
         this.turnOrder = [];
-        
+
         this.bgm = document.getElementById('bgm');
-        
+
         this.commandDescriptions = {
             'こうげき': '装備している武器で 敵に攻撃する。',
             'とくぎ': 'MPを消費して 特殊な技を使う。',
@@ -87,7 +87,7 @@ class Game {
             'ぼうぎょ': '次のターン受けるダメージを 半分にする。',
             'そうび': '武器を装備したり 外したりする。(ターンは消費しない)'
         };
-        
+
         this.abilityDescriptions = {
             'バーカード': 'すべての攻撃を自分に引きつけ、仲間を守る。',
             'ひらめく': 'とんちんかんな答えで 敵を笑わせ、1回動けなくする。',
@@ -97,30 +97,30 @@ class Game {
             'マジックダンス': '不思議な踊りで 仲間全員のMPを すべて回復する。',
             'アホ草': '仲間ひとりのHPとMPを 少しだけ回復する。'
         };
-        
+
         this.weapons = {
             'オバカーノ剣': { attack: 100 },
             '手羽先': { attack: 50 },
             'マジックステッキ': { attack: 30 }
         };
-        
+
         this.characterWeapons = {
             'アリス': 'オバカーノ剣',
             'キーミー': '手羽先',
             'ソリベル': 'マジックステッキ'
         };
-        
+
         this.inventory = { 'アホ草': 10 };
-        
+
         // 元の姿をランダムに設定
         const originalImages = ['images/monsters/doraky.png', 'images/monsters/slime.png', 'images/player/hero.png'];
         this.originalGolimeImagePath = originalImages[Math.floor(Math.random() * originalImages.length)];
         this.originalGolimeName = "仲間キャラ";
-        
+
         this.images = {};
         this.loadImages();
     }
-    
+
     loadImages() {
         const imageList = [
             { key: 'background', src: 'images/mon2.jpg' },
@@ -130,9 +130,9 @@ class Game {
             { key: 'hero3', src: 'images/player/hero3.png' },
             { key: 'lime', src: this.originalGolimeImagePath }
         ];
-        
+
         let loadedCount = 0;
-        
+
         imageList.forEach(item => {
             const img = new Image();
             img.onload = () => {
@@ -152,7 +152,7 @@ class Game {
             img.src = item.src;
         });
     }
-    
+
     init() {
         // 敵の強さをランダムに設定
         const enemyTypes = [
@@ -161,7 +161,7 @@ class Game {
             { name: '強いゴライム', hp: 3000, attack: 100, defense: 100 }
         ];
         const randomEnemyType = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
-        
+
         // 敵の強さに応じてプレイヤーのステータスを調整
         let heroStats;
         if (randomEnemyType.name === '弱いゴライム') {
@@ -183,7 +183,7 @@ class Game {
                 soribel: { level: 99, hp: 500, mp: 680, attack: 150, defense: 180 }
             };
         }
-        
+
         this.heroes = [
             new Character('アリス', heroStats.alice.level, heroStats.alice.hp, heroStats.alice.mp, heroStats.alice.attack, heroStats.alice.defense, 'images/player/hero.png', {
                 equipment: this.weapons['オバカーノ剣'],
@@ -204,20 +204,20 @@ class Game {
                 skills: [{ name: 'マジックダンス', mp: 100 }]
             })
         ];
-        
+
         this.enemies = [
             new Character(randomEnemyType.name, 50, randomEnemyType.hp, 0, randomEnemyType.attack, randomEnemyType.defense, 'images/monsters/ゴライム.png')
         ];
-        
+
         this.turnOrder = [...this.heroes, ...this.enemies];
         this.shuffleArray(this.turnOrder);
-        
+
         this.setupEventListeners();
         this.updateStatusDisplay();
         this.drawBattleField();
-        
+
         this.showMessage(`${this.enemies[0].name}が あらわれた！`);
-        
+
         // BGM を選択（強いゴライムのときは battle4.mp3 を確実に選択）
         let selectedBgm;
         if (randomEnemyType.name === '強いゴライム') {
@@ -227,7 +227,7 @@ class Game {
             selectedBgm = bgmFiles[Math.floor(Math.random() * bgmFiles.length)];
         }
         this.bgm.src = `bgm/${selectedBgm}`;
-        
+
         // BGM 再生を試みる。自動再生がブロックされた場合は
         // ユーザーの最初の操作（クリックまたはキー押下）で再生を再試行する。
         if (this.bgm) {
@@ -246,19 +246,20 @@ class Game {
                 document.addEventListener('keydown', tryPlayOnGesture, { once: true });
             });
         }
-        
+
         setTimeout(() => this.nextTurn(), 2000);
     }
-    
+
     shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
     }
-  setupEventListeners() {
+
+    setupEventListeners() {
         document.addEventListener('keydown', (e) => this.handleKeyInput(e));
-        
+
         // コマンドアイテムのクリックイベント
         document.querySelectorAll('.command-item').forEach(item => {
             item.addEventListener('click', () => {
@@ -271,11 +272,11 @@ class Game {
             });
         });
     }
-    
+
     handleKeyInput(e) {
         if (this.gameState === GameState.COMMAND_SELECT) {
             this.handleCommandInput(e);
-        } else if (this.gameState === GameState.SKILL_SELECT || 
+        } else if (this.gameState === GameState.SKILL_SELECT ||
                    this.gameState === GameState.SPELL_SELECT ||
                    this.gameState === GameState.ITEM_SELECT ||
                    this.gameState === GameState.EQUIP_SELECT) {
@@ -284,10 +285,10 @@ class Game {
             this.handleTargetInput(e);
         }
     }
-    
+
     handleCommandInput(e) {
         const oldIndex = this.selectedCommandIndex;
-        
+
         switch(e.key) {
             case 'ArrowUp':
                 if (this.selectedCommandIndex >= 2) this.selectedCommandIndex -= 2;
@@ -307,17 +308,17 @@ class Game {
             case 'Escape':
                 return;
         }
-        
+
         if (oldIndex !== this.selectedCommandIndex) {
             this.updateCommandCursor();
             this.showCommandDescription();
         }
     }
-    
+
     handleSubmenuInput(e) {
         const items = document.querySelectorAll('.submenu-item');
         const oldIndex = this.selectedSubmenuIndex;
-        
+
         switch(e.key) {
             case 'ArrowUp':
                 if (this.selectedSubmenuIndex > 0) this.selectedSubmenuIndex--;
@@ -332,13 +333,13 @@ class Game {
                 this.showCommandWindow(this.currentAttacker);
                 return;
         }
-        
+
         if (oldIndex !== this.selectedSubmenuIndex) {
             this.updateSubmenuCursor();
             this.showSubmenuDescription();
         }
     }
-    
+
     handleTargetInput(e) {
         switch(e.key) {
             case 'ArrowLeft':
@@ -355,47 +356,47 @@ class Game {
                 this.executeCommand(this.lastCommand);
                 return;
         }
-        
+
         this.updateTargetCursor();
     }
-    
+
     drawBattleField() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
+
         if (this.images.background) {
             this.ctx.drawImage(this.images.background, 0, 0, 800, 450);
         }
-        
+
         if (this.enemies[0].isAlive()) {
             const enemyImg = this.images.enemy;
             if (enemyImg) {
                 this.ctx.drawImage(enemyImg, 325, 210, 150, 150);
             }
-            
+
             this.ctx.font = 'bold 20px "MS Gothic", monospace';
             this.ctx.fillStyle = '#fff';
             this.ctx.textAlign = 'center';
             this.ctx.fillText(`${this.enemies[0].name} A`, 400, 380);
         }
     }
-    
+
     updateStatusDisplay() {
         const container = document.getElementById('hero-status-container');
         container.innerHTML = '';
-        
+
         this.heroes.forEach((hero, index) => {
             const statusDiv = document.createElement('div');
             statusDiv.className = 'hero-status';
             statusDiv.id = `hero-status-${index}`;
             if (!hero.isAlive()) statusDiv.classList.add('dead');
-            
+
             const headerDiv = document.createElement('div');
             headerDiv.className = 'hero-status-header';
             headerDiv.textContent = hero.name;
-            
+
             const bodyDiv = document.createElement('div');
             bodyDiv.className = 'hero-status-body';
-            
+
             const imageKey = `hero${index + 1}`;
             if (this.images[imageKey]) {
                 const img = document.createElement('img');
@@ -410,60 +411,60 @@ class Game {
                 img.alt = this.originalGolimeName || 'lime';
                 bodyDiv.appendChild(img);
             }
-            
+
             const statsDiv = document.createElement('div');
             statsDiv.className = 'hero-stats';
-            
+
             const hpRow = document.createElement('div');
             hpRow.className = 'stat-row';
             hpRow.innerHTML = `<span class="stat-label">ＨＰ</span><span class="stat-value">${hero.hp.toString().padStart(3, ' ')}</span>`;
-            
+
             const mpRow = document.createElement('div');
             mpRow.className = 'stat-row';
             mpRow.innerHTML = `<span class="stat-label">ＭＰ</span><span class="stat-value">${hero.mp.toString().padStart(3, ' ')}</span>`;
-            
+
             const levelDiv = document.createElement('div');
             levelDiv.className = 'hero-level';
             levelDiv.textContent = `Lv ${hero.level.toString().padStart(2, ' ')}`;
-            
+
             statsDiv.appendChild(hpRow);
             statsDiv.appendChild(mpRow);
             statsDiv.appendChild(levelDiv);
-            
+
             bodyDiv.appendChild(statsDiv);
-            
+
             statusDiv.appendChild(headerDiv);
             statusDiv.appendChild(bodyDiv);
-            
+
             container.appendChild(statusDiv);
         });
     }
-    
+
     showMessage(message) {
         document.getElementById('message-text').textContent = message;
         this.gameState = GameState.MESSAGE;
     }
-    
+
     showCommandWindow(hero) {
         this.currentAttacker = hero;
         document.getElementById('message-text').textContent = '';
         document.getElementById('submenu-window').style.display = 'none';
         document.getElementById('command-window').style.display = 'block';
         document.getElementById('command-char-name').textContent = hero.name;
-        
+
         this.gameState = GameState.COMMAND_SELECT;
         this.selectedCommandIndex = 0;
         this.updateCommandCursor();
         this.showCommandDescription();
     }
-    
+
     showCommandDescription() {
         const commands = ['こうげき', 'とくぎ', 'じゅもん', 'どうぐ', 'ぼうぎょ', 'そうび'];
         const command = commands[this.selectedCommandIndex];
         const description = this.commandDescriptions[command] || '';
         document.getElementById('message-text').textContent = description;
     }
-    
+
     updateCommandCursor() {
         const items = document.querySelectorAll('.command-item');
         items.forEach((item, index) => {
@@ -473,24 +474,24 @@ class Game {
                 item.classList.remove('selected');
             }
         });
-        
+
         const cursor = document.getElementById('command-cursor');
         const selectedItem = items[this.selectedCommandIndex];
         const rect = selectedItem.getBoundingClientRect();
         const gridRect = document.getElementById('command-grid').getBoundingClientRect();
-        
+
         cursor.style.left = (rect.left - gridRect.left) + 'px';
         cursor.style.top = (rect.top - gridRect.top) + 'px';
     }
-    
+
     showSubmenu(title, items, state, initialMessage = null) {
         const submenuWindow = document.getElementById('submenu-window');
         const submenuTitle = document.getElementById('submenu-title');
         const submenuItems = document.getElementById('submenu-items');
-        
+
         submenuTitle.textContent = title;
         submenuItems.innerHTML = '';
-        
+
         items.forEach((item, index) => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'submenu-item';
@@ -503,28 +504,28 @@ class Game {
             });
             submenuItems.appendChild(itemDiv);
         });
-        
+
         document.getElementById('command-window').style.display = 'none';
         submenuWindow.style.display = 'block';
-        
+
         this.gameState = state;
         this.selectedSubmenuIndex = 0;
         this.updateSubmenuCursor();
-        
+
         if (initialMessage !== null) {
             document.getElementById('message-text').textContent = initialMessage;
         } else {
             this.showSubmenuDescription();
         }
     }
-    
+
     showSubmenuDescription() {
         const items = document.querySelectorAll('.submenu-item');
         if (items.length === 0) return;
-        
+
         const selectedText = items[this.selectedSubmenuIndex].textContent;
         let description = '';
-        
+
         if (selectedText === 'もどる') {
             description = 'ひとつまえの コマンドに もどります。';
         } else if (this.gameState === GameState.SKILL_SELECT) {
@@ -543,10 +544,10 @@ class Game {
                 description = `${selectedText}を そうびする。`;
             }
         }
-        
+
         document.getElementById('message-text').textContent = description;
     }
-    
+
     updateSubmenuCursor() {
         const items = document.querySelectorAll('.submenu-item');
         items.forEach((item, index) => {
@@ -556,17 +557,18 @@ class Game {
                 item.classList.remove('selected');
             }
         });
-        
+
         const cursor = document.getElementById('submenu-cursor');
         const selectedItem = items[this.selectedSubmenuIndex];
         if (selectedItem) {
             cursor.style.top = selectedItem.offsetTop + 'px';
         }
     }
-   updateTargetCursor() {
+
+    updateTargetCursor() {
         const cursor = document.getElementById('target-cursor');
         const statusDivs = document.querySelectorAll('.hero-status');
-        
+
         statusDivs.forEach((div, index) => {
             if (index === this.selectedTargetIndex) {
                 div.style.backgroundColor = '#333';
@@ -580,21 +582,21 @@ class Game {
             }
         });
     }
-    
+
     hideTargetCursor() {
         document.getElementById('target-cursor').style.display = 'none';
         document.querySelectorAll('.hero-status').forEach(div => {
             div.style.backgroundColor = '#000';
         });
     }
-    
+
     executeCommand(commandText = null) {
         const commands = ['こうげき', 'とくぎ', 'じゅもん', 'どうぐ', 'ぼうぎょ', 'そうび'];
         const command = commandText || commands[this.selectedCommandIndex];
         this.lastCommand = command;
-        
+
         const attacker = this.currentAttacker;
-        
+
         if (command === 'こうげき') {
             this.playerAttack();
         } else if (command === 'どうぐ') {
@@ -631,30 +633,30 @@ class Game {
                 setTimeout(() => this.showCommandWindow(attacker), 1500);
                 return;
             }
-            
-            const message = attacker.weaponName 
+
+            const message = attacker.weaponName
                 ? `現在のそうび： ${attacker.weaponName}`
                 : 'なにもそうびしていません。';
-            
+
             const equipOptions = [weaponName, 'はずす', 'もどる'];
             this.showSubmenu('どうしますか？', equipOptions, GameState.EQUIP_SELECT, message);
         } else if (command === 'ぼうぎょ') {
             this.playerDefend();
         }
     }
-    
+
     executeSubmenuCommand() {
         const items = document.querySelectorAll('.submenu-item');
         const selectedText = items[this.selectedSubmenuIndex].textContent;
-        
+
         if (selectedText === 'もどる') {
             this.showCommandWindow(this.currentAttacker);
             return;
         }
-        
+
         const state = this.gameState;
         const attacker = this.currentAttacker;
-        
+
         if (state === GameState.ITEM_SELECT) {
             const itemName = Object.keys(this.inventory)[this.selectedSubmenuIndex];
             this.activeItem = itemName;
@@ -665,16 +667,16 @@ class Game {
         } else if (state === GameState.SKILL_SELECT || state === GameState.SPELL_SELECT) {
             const abilityList = state === GameState.SKILL_SELECT ? attacker.skills : attacker.spells;
             const ability = abilityList[this.selectedSubmenuIndex];
-            
+
             if (attacker.mp < ability.mp) {
                 this.showMessage('ＭＰが たりない！');
                 setTimeout(() => this.showCommandWindow(attacker), 1500);
                 return;
             }
-            
+
             attacker.mp -= ability.mp;
             this.updateStatusDisplay();
-            
+
             this.executeAbility(ability);
         } else if (state === GameState.EQUIP_SELECT) {
             if (selectedText === 'はずす') {
@@ -688,11 +690,11 @@ class Game {
             setTimeout(() => this.showCommandWindow(attacker), 1500);
         }
     }
-    
+
     executeAbility(ability) {
         const attacker = this.currentAttacker;
         const enemy = this.enemies[0];
-        
+
         if (ability.name === 'ひらめく') {
             this.showMessage(`${attacker.name}は なにか ひらめいた！`);
             setTimeout(() => {
@@ -756,15 +758,15 @@ class Game {
             setTimeout(() => this.nextTurn(), 2000);
         }
     }
-    
+
     executeTargetSelection() {
         const target = this.heroes[this.selectedTargetIndex];
         this.hideTargetCursor();
-        
+
         if (this.activeItem === 'アホ草') {
             this.inventory['アホ草']--;
             if (this.inventory['アホ草'] === 0) delete this.inventory['アホ草'];
-            
+
             const hpHeal = Math.min(10, target.maxHp - target.hp);
             const mpHeal = Math.min(10, target.maxMp - target.mp);
             target.hp += hpHeal;
@@ -774,14 +776,14 @@ class Game {
             setTimeout(() => this.nextTurn(), 2500);
         }
     }
-    
+
     playerDefend() {
         const attacker = this.currentAttacker;
         attacker.isDefending = true;
         this.showMessage(`${attacker.name}は みをまもっている！`);
         setTimeout(() => this.nextTurn(), 1500);
     }
-    
+
     playerAttack() {
         const attacker = this.currentAttacker;
         const target = this.enemies[0];
@@ -791,20 +793,12 @@ class Game {
         this.showMessage(`${attacker.name}の こうげき！\n${target.name}に ${damage}のダメージ！`);
         setTimeout(() => this.nextTurn(), 2000);
     }
-    
+
     nextTurn() {
-        if (this.currentAttacker) {
-            this.currentAttacker.isDefending = false;
-            if (this.currentAttacker.isNioDachi) {
-                this.currentAttacker.isNioDachi = false;
-                this.nioDachiCharacter = null;
-            }
-        }
-        
         if (this.enemies[0].dazzleTurns > 0) {
             this.enemies[0].dazzleTurns--;
         }
-        
+
         if (!this.heroes.some(h => h.isAlive())) {
             this.showMessage('アリスたちは ぜんめつした…');
             setTimeout(() => {
@@ -813,34 +807,41 @@ class Game {
             }, 3000);
             return;
         }
-        
+
         if (!this.enemies.some(e => e.isAlive())) {
             this.handleVictory();
             return;
         }
-        
+
         let char = this.turnOrder[this.currentTurnIndex];
         while (!char.isAlive()) {
             this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
             char = this.turnOrder[this.currentTurnIndex];
         }
-        
+
         this.currentTurnIndex = (this.currentTurnIndex + 1) % this.turnOrder.length;
-        
+
         if (this.heroes.includes(char)) {
             this.playerTurn(char);
         } else {
             this.enemyTurn(char);
         }
     }
-    
+
     playerTurn(hero) {
+        // ターン開始時に、前のターンに行った防御や仁王立ちの効果を解除する
+        hero.isDefending = false;
+        if (this.nioDachiCharacter && this.nioDachiCharacter.name === hero.name) {
+            this.nioDachiCharacter.isNioDachi = false;
+            this.nioDachiCharacter = null;
+        }
+        
         this.showCommandWindow(hero);
     }
-    
+
     enemyTurn(enemy) {
         this.currentAttacker = enemy;
-        
+
         if (enemy.laughingTurns > 0) {
             enemy.laughingTurns--;
             if (enemy.laughingTurns > 0) {
@@ -849,49 +850,49 @@ class Game {
                 return;
             }
         }
-        
+
         this.showMessage(`${enemy.name}の こうげき！`);
         setTimeout(() => this.enemyAttackAction(enemy), 1500);
     }
-    
+
     enemyAttackAction(enemy) {
         if (enemy.dazzleTurns > 0 && Math.random() < 0.5) {
             this.showMessage(`しかし ${enemy.name}のこうげきは はずれた！`);
             setTimeout(() => this.nextTurn(), 1500);
             return;
         }
-        
+
         const aliveHeroes = this.heroes.filter(h => h.isAlive());
         if (aliveHeroes.length === 0) return;
-        
+
         const target = this.nioDachiCharacter && this.nioDachiCharacter.isAlive()
             ? this.nioDachiCharacter
             : aliveHeroes[Math.floor(Math.random() * aliveHeroes.length)];
-        
+
         let damage = Math.max(1, enemy.attack - Math.floor(target.defense / 2) + Math.floor(Math.random() * 11) - 5);
         if (target.isDefending) damage = Math.floor(damage / 2);
-        
+
         target.hp = Math.max(0, target.hp - damage);
         this.updateStatusDisplay();
         this.showMessage(`${target.name}は ${damage}のダメージを うけた！`);
         setTimeout(() => this.nextTurn(), 2000);
     }
-    
+
     handleVictory() {
         this.gameState = GameState.EVENT;
         this.drawBattleField();
         this.showMessage(`${this.enemies[0].name}を やっつけた！`);
         setTimeout(() => this.eventStep1(), 2000);
     }
-    
+
     eventStep1() {
         this.showMessage(`${this.enemies[0].name}が まばゆい光に つつまれた！`);
         setTimeout(() => this.eventStep2(), 2500);
     }
-    
+
     eventStep2() {
         this.showMessage('ゴライムは 本来のすがたに もどった！');
-        
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.images.background) {
             this.ctx.drawImage(this.images.background, 0, 0, 800, 450);
@@ -899,28 +900,28 @@ class Game {
         if (this.images.lime) {
             this.ctx.drawImage(this.images.lime, 325, 210, 150, 150);
         }
-        
+
         setTimeout(() => this.eventStep3(), 2500);
     }
-    
+
     eventStep3() {
         this.showMessage(`「ぼくは ${this.originalGolimeName}！\n  いっしょに つれていってよ！」`);
         setTimeout(() => this.eventStep4(), 3000);
     }
-    
+
     eventStep4() {
         this.showMessage(`${this.originalGolimeName}が 仲間に くわわった！`);
-        
+
         setTimeout(() => {
             const lime = new Character(
                 this.originalGolimeName,
                 99, 1, 1, 1, 1,
                 this.originalGolimeImagePath
             );
-            
+
             this.heroes.push(lime);
             this.updateStatusDisplay();
-            
+
             setTimeout(() => {
                 this.bgm.pause();
                 alert('ゲームクリア！ おめでとう！');
@@ -932,9 +933,110 @@ class Game {
             }, 5000);
         }, 2000);
     }
+
+    saveGameState() {
+        const state = {
+            heroes: this.heroes.map(hero => ({
+                name: hero.name,
+                level: hero.level,
+                hp: hero.hp,
+                maxHp: hero.maxHp,
+                mp: hero.mp,
+                maxMp: hero.maxMp,
+                attack: hero.baseAttack,
+                defense: hero.defense,
+                imagePath: hero.imagePath,
+                skills: hero.skills,
+                spells: hero.spells,
+                equipment: hero.equipment,
+                weaponName: hero.weaponName,
+                isDefending: hero.isDefending,
+                isNioDachi: hero.isNioDachi,
+                dazzleTurns: hero.dazzleTurns,
+                laughingTurns: hero.laughingTurns
+            })),
+            enemies: this.enemies.map(enemy => ({
+                name: enemy.name,
+                level: enemy.level,
+                hp: enemy.hp,
+                maxHp: enemy.maxHp,
+                mp: enemy.mp,
+                maxMp: enemy.maxMp,
+                attack: enemy.baseAttack,
+                defense: enemy.defense,
+                imagePath: enemy.imagePath,
+                isDefending: enemy.isDefending,
+                dazzleTurns: enemy.dazzleTurns,
+                laughingTurns: enemy.laughingTurns
+            })),
+            turnOrder: this.turnOrder.map(char => char.name),
+            currentTurnIndex: this.currentTurnIndex,
+            inventory: this.inventory,
+            bgmSrc: this.bgm.src,
+            originalGolimeImagePath: this.originalGolimeImagePath,
+            originalGolimeName: this.originalGolimeName,
+            nioDachiCharacter: this.nioDachiCharacter ? this.nioDachiCharacter.name : null
+        };
+        localStorage.setItem('gameState', JSON.stringify(state));
+        alert('ゲームの状態を保存しました！');
+    }
+
+    loadGameState() {
+        const savedState = localStorage.getItem('gameState');
+        if (!savedState) {
+            alert('保存されたゲームの状態が見つかりません。');
+            return;
+        }
+        const state = JSON.parse(savedState);
+
+        this.heroes = state.heroes.map(heroData => {
+            const hero = new Character(heroData.name, heroData.level, heroData.hp, heroData.mp, heroData.attack, heroData.defense, heroData.imagePath);
+            hero.maxHp = heroData.maxHp;
+            hero.maxMp = heroData.maxMp;
+            hero.skills = heroData.skills;
+            hero.spells = heroData.spells;
+            hero.equipment = heroData.equipment;
+            hero.weaponName = heroData.weaponName;
+            hero.isDefending = heroData.isDefending;
+            hero.isNioDachi = heroData.isNioDachi;
+            hero.dazzleTurns = heroData.dazzleTurns;
+            hero.laughingTurns = heroData.laughingTurns;
+            hero.recalculateStats();
+            return hero;
+        });
+
+        this.enemies = state.enemies.map(enemyData => {
+            const enemy = new Character(enemyData.name, enemyData.level, enemyData.hp, enemyData.mp, enemyData.attack, enemyData.defense, enemyData.imagePath);
+            enemy.maxHp = enemyData.maxHp;
+            enemy.maxMp = enemyData.maxMp;
+            enemy.isDefending = enemyData.isDefending;
+            enemy.dazzleTurns = enemyData.dazzleTurns;
+            enemy.laughingTurns = enemyData.laughingTurns;
+            return enemy;
+        });
+
+        this.turnOrder = [...this.heroes, ...this.enemies];
+        this.currentTurnIndex = state.currentTurnIndex;
+        this.inventory = state.inventory;
+        this.bgm.src = state.bgmSrc;
+        this.originalGolimeImagePath = state.originalGolimeImagePath;
+        this.originalGolimeName = state.originalGolimeName;
+        this.nioDachiCharacter = state.nioDachiCharacter ? this.heroes.find(h => h.name === state.nioDachiCharacter) : null;
+
+        this.shuffleArray(this.turnOrder);
+        this.setupEventListeners();
+        this.updateStatusDisplay();
+        this.drawBattleField();
+        this.showMessage('ゲームの状態をロードしました！');
+
+        // BGM 再生
+        this.bgm.play().catch(e => console.error('BGM play failed:', e));
+
+        setTimeout(() => this.nextTurn(), 2000);
+    }
 }
 
 // ゲーム開始
 window.addEventListener('load', () => {
-    new Game();
+    window.game = new Game();
 });

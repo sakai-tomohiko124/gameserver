@@ -228,6 +228,29 @@ body {
     word-wrap: break-word;
 }
 
+#save-load-buttons {
+    position: absolute;
+    bottom: 200px;
+    right: 10px;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+#save-load-buttons button {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #000;
+    color: #fff;
+    border: 2px solid #fff;
+    cursor: pointer;
+}
+
+#save-load-buttons button:hover {
+    background-color: #333;
+}
+
 @media (max-width: 820px) {
     #game-container {
         transform: scale(0.9);

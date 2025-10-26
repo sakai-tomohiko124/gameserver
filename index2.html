@@ -46,6 +46,35 @@
 
     <audio id="bgm" loop></audio>
 
+    <!-- 保存・ロードボタン -->
+    <div id="save-load-buttons">
+        <button id="save-button">ゲーム保存</button>
+        <button id="load-button">ゲームロード</button>
+    </div>
+
     <script src="js/game.js"></script>
+    <script>
+        // 保存・ロードボタンのイベント
+        document.addEventListener('DOMContentLoaded', () => {
+            const saveButton = document.getElementById('save-button');
+            const loadButton = document.getElementById('load-button');
+
+            if (saveButton) {
+                saveButton.addEventListener('click', () => {
+                    if (window.game) {
+                        window.game.saveGameState();
+                    }
+                });
+            }
+
+            if (loadButton) {
+                loadButton.addEventListener('click', () => {
+                    if (window.game) {
+                        window.game.loadGameState();
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

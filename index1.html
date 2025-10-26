@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HEROQUEST - スタート画面</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="favicon.ico">
     <style>
         #command-list li.selected {
             background-color: yellow;
@@ -19,173 +20,58 @@
 <body>
 
     <div id="game-container">
-        <!-- スタート画面 -->
+        <!-- 簡素化したスタート画面 -->
         <div id="start-screen" class="screen active">
             <div class="menu-window">
                 <h1>HEROQUEST</h1>
-                <button id="start-button">冒険をする</button>
-                <button id="load-button">続きから</button>
-                <button id="resume-button">中断したところから始める</button>
-                <button id="delete-save-button">冒険の書を消す</button>
+                <button id="start-button">戦闘シーンを疑似体験</button>
                 <button id="manage-saves-button">クレジット</button>
-                <button id="bulk-command-button">一括コマンド</button>
-            </div>
-        </div>
 
-        <!-- セーブ/ロード選択画面 -->
-        <div id="save-slot-screen" class="screen">
-            <div class="menu-window">
-                <h2 id="save-slot-title">冒険の書をえらんでください</h2>
-                <div id="save-slots-container">
-                    <!-- JavaScriptによってセーブスロットがここに表示されます -->
+                <!-- 外部リンク（チャットや小説など） -->
+                <div class="external-links" style="margin-top:12px;">
+                    <a id="chat-link" class="link-button" href="https://tmhk-chat.ddns.net/" target="_blank" rel="noopener noreferrer">チャット</a>
+                    <a id="search-link" class="link-button" href="https://sakai-tomohiko124.github.io/loading.html" target="_blank" rel="noopener noreferrer">検索ツール＆クイズ</a>
+                    <a id="auto-chat-link" class="link-button" href="https://sakai-tomohiko124.github.io/index3.html" target="_blank" rel="noopener noreferrer">自動応答チャット</a>
+                    <a id="story-link" class="link-button" href="https://sakai-tomohiko124.github.io/password.html" target="_blank" rel="noopener noreferrer">小説</a>
+
                 </div>
-                <button id="back-to-start-button">もどる</button>
-            </div>
-        </div>
-
-        <!-- 名前・BGM設定画面 -->
-        <div id="config-screen" class="screen">
-            <div class="menu-window">
-                <h2>設定</h2>
-                <label for="player-name">主人公の名前:</label>
-                <input type="text" id="player-name" value="ヒーロー" maxlength="8">
-                <br>
-                <label for="bgm-volume">BGM音量:</label>
-                <input type="range" id="bgm-volume" min="0" max="1" step="0.1" value="1">
-                <br>
-                <button id="config-complete-button">けってい</button>
             </div>
         </div>
     </div>
 
-    <script src="js/main.js"></script>
-
     <script>
+        // DOM読み込み後に BGM を再生
         document.addEventListener('DOMContentLoaded', () => {
-            // BGM再生開始 (DQB2序曲)
             playBgm('DQB2序曲');
+
+            // 戦闘シーン疑似体験ボタンは index2.html に遷移（必要なら変更してください）
+            const startButton = document.getElementById('start-button');
+            if (startButton) {
+                startButton.addEventListener('click', () => {
+                    window.location.href = 'index2.html';
+                });
+            }
+
+            // クレジット（既存の index3.html へ遷移）
+            const manageSavesButton = document.getElementById('manage-saves-button');
+            if (manageSavesButton) {
+                manageSavesButton.addEventListener('click', () => {
+                    window.location.href = 'index3.html';
+                });
+            }
         });
 
-        // screens 定義
-        const screens = {
-            start: document.getElementById('start-screen'),
-            saveSlot: document.getElementById('save-slot-screen'),
-            config: document.getElementById('config-screen'),
-        };
-
-        // 画面切り替え関数（エラー防止のため定義）
-        function switchScreen(screenName) {
-            if (!screens[screenName]) {
-                console.error(`Screen '${screenName}' not found`);
-                return;
-            }
-            Object.values(screens).forEach(screen => screen.classList.remove('active'));
-            screens[screenName].classList.add('active');
-        }
-
-        // BGM再生関数
+        // BGM再生関数（bgm フォルダ内の mp3 を想定）
         function playBgm(mapName) {
             const bgmAudio = document.getElementById('bgm');
             if (!bgmAudio) return;
             const bgmSrc = `bgm/${mapName}.mp3`;
             bgmAudio.src = bgmSrc;
-            bgmAudio.volume = parseFloat(localStorage.getItem('bgmVolume')) || 0.3;
+            // 保存された音量があれば使用、なければ 0.3
+            const stored = localStorage.getItem('bgmVolume');
+            bgmAudio.volume = stored !== null ? parseFloat(stored) : 0.3;
             bgmAudio.play().catch(e => console.error('BGM play failed:', e));
         }
-
-        // セーブスロット画面表示関数（仮実装、エラー防止）
-        function showSaveSlotScreen(mode) {
-            document.getElementById('save-slot-title').textContent = mode === 'load' ? '冒険の書をえらんでください' : 'セーブスロットをえらんでください';
-            // ここにセーブスロットの動的生成ロジックを追加（未実装の場合）
-            switchScreen('saveSlot');
-        }
-
-        // スタート画面を表示
-        switchScreen('start');
-
-        // pending screen チェック
-        const pending = localStorage.getItem('pendingScreen');
-        if (pending === 'saveSlot') {
-            const mode = localStorage.getItem('saveSlotMode') || 'load';
-            showSaveSlotScreen(mode);
-            localStorage.removeItem('pendingScreen');
-            localStorage.removeItem('saveSlotMode');
-        }
-
-        // ボタンイベント（DOM チェック追加）
-        const startButton = document.getElementById('start-button');
-        if (startButton) {
-            startButton.addEventListener('click', () => {
-                switchScreen('config');
-            });
-        }
-
-        const loadButton = document.getElementById('load-button');
-        if (loadButton) {
-            loadButton.addEventListener('click', () => {
-                showSaveSlotScreen('load');
-            });
-        }
-
-        const resumeButton = document.getElementById('resume-button');
-        if (resumeButton) {
-            resumeButton.addEventListener('click', () => {
-                // 中断したところから始める処理（仮: セーブスロット表示）
-                showSaveSlotScreen('resume');
-            });
-        }
-
-        const deleteSaveButton = document.getElementById('delete-save-button');
-        if (deleteSaveButton) {
-            deleteSaveButton.addEventListener('click', () => {
-                showSaveSlotScreen('delete');
-            });
-        }
-
-        const manageSavesButton = document.getElementById('manage-saves-button');
-        if (manageSavesButton) {
-            manageSavesButton.addEventListener('click', () => {
-                window.location.href = 'index4.html';
-            });
-        }
-
-        const bulkCommandButton = document.getElementById('bulk-command-button');
-        if (bulkCommandButton) {
-            bulkCommandButton.addEventListener('click', () => {
-                // 一括コマンドの処理（例: すべてのセーブデータを削除）
-                if (confirm('すべてのセーブデータを削除しますか？')) {
-                    localStorage.clear();
-                    alert('すべてのセーブデータを削除しました。');
-                }
-            });
-        }
-
-        // 戻るボタン（セーブスロット画面用）
-        const backToStartButton = document.getElementById('back-to-start-button');
-        if (backToStartButton) {
-            backToStartButton.addEventListener('click', () => {
-                switchScreen('start');
-            });
-        }
-
-        // 設定完了ボタン（index2.htmlに遷移し、BGM再生）
-        const configCompleteButton = document.getElementById('config-complete-button');
-        if (configCompleteButton) {
-            configCompleteButton.addEventListener('click', () => {
-                // 名前とBGM音量を保存
-                const playerNameInput = document.getElementById('player-name');
-                const bgmVolumeInput = document.getElementById('bgm-volume');
-                const playerName = playerNameInput ? playerNameInput.value : 'ヒーロー';
-                const bgmVolume = bgmVolumeInput ? bgmVolumeInput.value : 0.3;
-                localStorage.setItem('playerName', playerName);
-                localStorage.setItem('bgmVolume', bgmVolume);
-                // BGM再生開始
-                playBgm('field');
-                // index2.html に遷移
-                window.location.href = 'index2.html';
-            });
-        }
-
     </script>
 
     <!-- BGM -->

@@ -1,0 +1,242 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'MS Gothic', monospace;
+    color: #fff;
+    overflow: hidden;
+}
+
+#game-container {
+    width: 800px;
+    height: 650px;
+    position: relative;
+    background-color: #000;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+#status-window {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 780px;
+    height: 180px;
+    border: 2px solid #fff;
+    background-color: #000;
+    display: flex;
+    padding: 5px;
+    z-index: 10;
+}
+
+#hero-status-container {
+    display: flex;
+    gap: 3px;
+    width: 100%;
+}
+
+.hero-status {
+    flex: 1;
+    border: 1px solid #fff;
+    padding: 5px;
+    background-color: #000;
+    position: relative;
+}
+
+.hero-status.dead {
+    color: #666;
+}
+
+.hero-status-header {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.hero-status-body {
+    display: flex;
+    align-items: flex-start;
+}
+
+.hero-image {
+    width: 56px;
+    height: 56px;
+    margin-right: 5px;
+}
+
+.hero-stats {
+    flex: 1;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.stat-label {
+    color: #0ff;
+}
+
+.stat-value {
+    text-align: right;
+    min-width: 40px;
+}
+
+.hero-level {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 2px;
+}
+
+#target-cursor {
+    position: absolute;
+    font-size: 15px;
+    font-weight: bold;
+    color: #fff;
+    display: none;
+    z-index: 20;
+}
+
+#battle-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    max-width: 100%;
+    height: auto;
+}
+
+#command-window {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 230px;
+    height: 180px;
+    border: 2px solid #fff;
+    background-color: #000;
+    padding: 10px;
+    display: none;
+    z-index: 10;
+}
+
+#command-char-name {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#command-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    position: relative;
+}
+
+.command-item {
+    font-size: 15px;
+    font-weight: bold;
+    padding: 4px 0 4px 20px;
+    cursor: pointer;
+}
+
+.command-item.selected {
+    color: #ff0;
+}
+
+#command-cursor {
+    position: absolute;
+    font-size: 15px;
+    font-weight: bold;
+    color: #fff;
+    pointer-events: none;
+}
+
+#submenu-window {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 230px;
+    height: 180px;
+    border: 2px solid #fff;
+    background-color: #000;
+    padding: 10px;
+    display: none;
+    z-index: 10;
+}
+
+#submenu-title {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#submenu-items {
+    position: relative;
+}
+
+.submenu-item {
+    font-size: 15px;
+    font-weight: bold;
+    padding: 4px 0 4px 20px;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+
+.submenu-item.selected {
+    color: #ff0;
+}
+
+#submenu-cursor {
+    position: absolute;
+    font-size: 15px;
+    font-weight: bold;
+    color: #fff;
+    left: 5px;
+    pointer-events: none;
+}
+
+#message-window {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 540px;
+    height: 180px;
+    border: 2px solid #fff;
+    background-color: #000;
+    padding: 10px;
+    z-index: 10;
+}
+
+#message-text {
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+@media (max-width: 820px) {
+    #game-container {
+        transform: scale(0.9);
+        transform-origin: center center;
+    }
+}
+
+@media (max-width: 720px) {
+    #game-container {
+        transform: scale(0.7);
+    }
+}

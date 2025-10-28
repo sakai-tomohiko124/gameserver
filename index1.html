@@ -26,7 +26,7 @@
                 <h1>HEROQUEST</h1>
                 <button id="start-button">戦闘シーンを疑似体験</button>
                 <button id="manage-saves-button">クレジット</button>
-
+                <button id="poke-button" class="link-button" type="button">ポケモン疑似体験</button>
                 <!-- 外部リンク（チャットや小説など） -->
                 <div class="external-links" style="margin-top:12px;">
                     <a id="chat-link" class="link-button" href="https://tmhk-chat.ddns.net/" target="_blank" rel="noopener noreferrer">チャット</a>
@@ -57,6 +57,14 @@
             if (manageSavesButton) {
                 manageSavesButton.addEventListener('click', () => {
                     window.location.href = 'index3.html';
+                });
+            }
+
+            // ポケモン疑似体験ボタンの遷移設定
+            const pokeButton = document.getElementById('poke-button');
+            if (pokeButton) {
+                pokeButton.addEventListener('click', () => {
+                    window.location.href = 'poke.html';
                 });
             }
         });
